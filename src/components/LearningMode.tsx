@@ -3,7 +3,7 @@ import { equations, ReactionType, Equation } from '../data/equations';
 import { EquationDisplay } from './EquationDisplay';
 import { Search, Filter, Info, Heart, FlaskConical, X } from 'lucide-react';
 import { motion } from 'motion/react';
-import { parseFormula } from '../utils/chemistry';
+import { getPhenomenonEmoji, parseFormula } from '../utils/chemistry';
 
 const REACTION_TYPES: ReactionType[] = ['化合反应', '分解反应', '置换反应', '复分解反应', '其他'];
 
@@ -490,9 +490,14 @@ export const LearningMode: React.FC = () => {
                 {eq.phenomenon && (
                   <div className="mt-6 flex justify-end relative group">
                     <button
+                      type="button"
+                      aria-label={`查看现象：${eq.phenomenon}`}
                       className="flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 rounded-lg transition-colors text-sm font-medium cursor-default"
                     >
-                      <Info className="w-4 h-4" />
+                      <span className="text-base leading-none" aria-hidden="true">
+                        {getPhenomenonEmoji(eq.phenomenon)}
+                      </span>
+                      <Info className="w-4 h-4 shrink-0" />
                       查看现象
                     </button>
                     {/* 悬浮提示框 */}
