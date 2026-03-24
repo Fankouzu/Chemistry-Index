@@ -71,3 +71,39 @@ export const getPhenomenonEmoji = (phenomenon: string): string => {
   if (/无色气体/.test(t)) return '💨';
   return '🔬';
 };
+
+/**
+ * Map a single condition fragment (e.g. "加热", "MnO2") to emoji prefix(es) for equation arrow labels.
+ * Order: more specific / energy-related cues first.
+ */
+export function getReactionConditionEmojis(segment: string): string {
+  const s = segment.trim();
+  if (!s) return '';
+  const emojis: string[] = [];
+  const push = (e: string) => {
+    if (e && !emojis.includes(e)) emojis.push(e);
+  };
+  if (/通电/.test(s)) push('⚡');
+  if (/点燃/.test(s)) push('🔥');
+  if (/催化剂/.test(s)) push('🧪');
+  if (/MnO2|二氧化锰/i.test(s)) push('⚗️');
+  if (/高温/.test(s)) push('🌡️');
+  if (/加热/.test(s)) push('♨️');
+  if (/高压/.test(s)) push('💨');
+  if (/光照|紫外线/.test(s)) push('☀️');
+  if (/电解/.test(s)) push('⚡');
+  return emojis.join('');
+}
+
+/** Insert leading emoji(s) per comma-separated condition; empty string unchanged. */
+export function formatEquationConditionsWithEmojis(conditions: string): string {
+  const trimmed = conditions.trim();
+  if (!trimmed) return '';
+  const parts = trimmed.split(/\s*[,，、]\s*/).map((p) => p.trim()).filter(Boolean);
+  return parts
+    .map((part) => {
+      const icons = getReactionConditionEmojis(part);
+      return icons ? `${icons} ${part}` : part;
+    })
+    .join('，');
+}

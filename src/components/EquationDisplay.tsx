@@ -1,25 +1,29 @@
 import React from 'react';
 import { Equation } from '../data/equations';
+import { formatEquationConditionsWithEmojis } from '../utils/chemistry';
 import { Formula } from './Formula';
 
 interface EquationDisplayProps {
   equation: Equation;
   showCoefficients?: boolean;
-  userCoefficients?: Record<string, string>; // key: reactant-0, product-1, etc.
+  userCoefficients?: Record<string, string>;
   onCoefficientChange?: (key: string, value: string) => void;
   interactive?: boolean;
 }
+
+/** Larger formula line; font family stays on Formula (font-serif) */
+const FORMULA_SIZE = 'text-2xl sm:text-3xl md:text-[2.125rem] leading-tight';
 
 export const EquationDisplay: React.FC<EquationDisplayProps> = ({
   equation,
   showCoefficients = true,
   userCoefficients = {},
   onCoefficientChange,
-  interactive = false
+  interactive = false,
 }) => {
   const renderMolecule = (mol: { formula: string; coef: number }, index: number, type: 'reactant' | 'product') => {
     const key = `${type}-${index}`;
-    
+
     if (interactive) {
       return (
         <div key={key} className="flex items-center">
@@ -27,11 +31,11 @@ export const EquationDisplay: React.FC<EquationDisplayProps> = ({
             type="text"
             value={userCoefficients[key] || ''}
             onChange={(e) => onCoefficientChange?.(key, e.target.value.replace(/[^0-9]/g, ''))}
-            className="w-8 h-10 text-center border-b-2 border-blue-400 dark:border-blue-600 bg-blue-50/50 dark:bg-blue-900/20 mx-1 text-lg font-bold focus:outline-none focus:border-blue-600 dark:focus:border-blue-400 focus:bg-blue-100 dark:focus:bg-blue-900/40 transition-colors rounded-t dark:text-gray-100"
+            className="font-serif mx-1 h-12 w-10 rounded-t border-b-2 border-blue-400 bg-blue-50/50 text-center text-xl font-bold text-zinc-900 transition-colors focus:border-blue-600 focus:bg-blue-100 focus:outline-none dark:border-blue-600 dark:bg-blue-900/20 dark:text-zinc-100 dark:focus:border-blue-400 dark:focus:bg-blue-900/40"
             placeholder="1"
             maxLength={2}
           />
-          <Formula text={mol.formula} className="text-xl" />
+          <Formula text={mol.formula} className={FORMULA_SIZE} />
         </div>
       );
     }
@@ -39,41 +43,48 @@ export const EquationDisplay: React.FC<EquationDisplayProps> = ({
     return (
       <span key={key} className="flex items-center">
         {showCoefficients && mol.coef > 1 && (
-          <span className="text-xl font-bold mr-0.5 text-blue-700 dark:text-blue-400">{mol.coef}</span>
+          <span className={`font-serif mr-0.5 font-bold tabular-nums text-zinc-600 dark:text-white ${FORMULA_SIZE}`}>
+            {mol.coef}
+          </span>
         )}
-        <Formula text={mol.formula} className="text-xl dark:text-gray-100" />
+        <Formula text={mol.formula} className={FORMULA_SIZE} />
       </span>
     );
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-y-4 py-4">
-      {/* Reactants */}
-      <div className="flex items-center flex-wrap justify-center">
+    <div className="flex flex-wrap items-center justify-center gap-y-4 py-5 sm:py-6">
+      <div className="flex flex-wrap items-center justify-center">
         {equation.reactants.map((mol, i) => (
           <React.Fragment key={`r-${i}`}>
-            {i > 0 && <span className="mx-3 text-xl font-bold text-gray-400 dark:text-gray-500">+</span>}
+            {i > 0 && (
+              <span className="mx-2 font-bold text-zinc-900 dark:text-white sm:mx-3 text-2xl sm:text-3xl md:text-[2rem]" aria-hidden>
+                +
+              </span>
+            )}
             {renderMolecule(mol, i, 'reactant')}
           </React.Fragment>
         ))}
       </div>
 
-      {/* Arrow and Conditions */}
-      <div className="flex flex-col items-center mx-4 relative min-w-[60px]">
-        <span className="text-sm text-gray-600 dark:text-gray-400 absolute -top-5 whitespace-nowrap">
-          {equation.conditions}
+      <div className="relative mx-3 flex min-w-[4.5rem] flex-col items-center sm:mx-5 sm:min-w-[5.5rem]">
+        <span className="absolute -top-6 max-w-[min(90vw,18rem)] whitespace-normal text-center text-sm font-medium text-zinc-600 dark:text-white sm:-top-5 sm:text-base">
+          {formatEquationConditionsWithEmojis(equation.conditions)}
         </span>
-        <div className="flex items-center w-full">
-          <div className="h-0.5 bg-gray-800 dark:bg-gray-200 w-full"></div>
-          <div className="w-2 h-2 border-t-2 border-r-2 border-gray-800 dark:border-gray-200 transform rotate-45 -ml-1.5"></div>
+        <div className="flex w-full items-center">
+          <div className="h-0.5 w-full bg-zinc-800 dark:bg-zinc-200" />
+          <div className="-ml-1.5 h-2 w-2 rotate-45 border-t-2 border-r-2 border-zinc-800 dark:border-zinc-200" />
         </div>
       </div>
 
-      {/* Products */}
-      <div className="flex items-center flex-wrap justify-center">
+      <div className="flex flex-wrap items-center justify-center">
         {equation.products.map((mol, i) => (
           <React.Fragment key={`p-${i}`}>
-            {i > 0 && <span className="mx-3 text-xl font-bold text-gray-400 dark:text-gray-500">+</span>}
+            {i > 0 && (
+              <span className="mx-2 font-bold text-zinc-900 dark:text-white sm:mx-3 text-2xl sm:text-3xl md:text-[2rem]" aria-hidden>
+                +
+              </span>
+            )}
             {renderMolecule(mol, i, 'product')}
           </React.Fragment>
         ))}

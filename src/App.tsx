@@ -77,6 +77,7 @@ function App() {
       <main className="pb-20">
         <motion.div
           key={activeTab}
+          className="text-gray-900 dark:text-[rgb(243,244,246)]"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}

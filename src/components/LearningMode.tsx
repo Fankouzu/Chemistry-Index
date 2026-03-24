@@ -1,263 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { equations, ReactionType, Equation } from '../data/equations';
 import { EquationDisplay } from './EquationDisplay';
-import { Search, Filter, Info, Heart, FlaskConical, X } from 'lucide-react';
+import { Search, Filter, Info, Heart, FlaskConical } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getPhenomenonEmoji, parseFormula } from '../utils/chemistry';
+import { CATEGORY_STYLES, ELEMENT_INFO, PERIODIC_TABLE_POSITIONS } from '../data/elements';
 
 const REACTION_TYPES: ReactionType[] = ['化合反应', '分解反应', '置换反应', '复分解反应', '其他'];
-
-const CATEGORY_STYLES = {
-  'reactive-nonmetal': {
-    colorClass: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800 hover:bg-yellow-100 dark:hover:bg-yellow-900/50',
-    activeClass: 'bg-yellow-500 text-white border-yellow-600 shadow-sm',
-    disabledClass: 'bg-yellow-50/40 dark:bg-yellow-900/20 text-yellow-700/40 dark:text-yellow-400/40 border-yellow-200/40 dark:border-yellow-800/40 hover:bg-yellow-50/60 dark:hover:bg-yellow-900/30',
-  },
-  'alkali-metal': {
-    colorClass: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/50',
-    activeClass: 'bg-red-500 text-white border-red-600 shadow-sm',
-    disabledClass: 'bg-red-50/40 dark:bg-red-900/20 text-red-700/40 dark:text-red-400/40 border-red-200/40 dark:border-red-800/40 hover:bg-red-50/60 dark:hover:bg-red-900/30',
-  },
-  'alkaline-earth-metal': {
-    colorClass: 'bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900/50',
-    activeClass: 'bg-orange-500 text-white border-orange-600 shadow-sm',
-    disabledClass: 'bg-orange-50/40 dark:bg-orange-900/20 text-orange-700/40 dark:text-orange-400/40 border-orange-200/40 dark:border-orange-800/40 hover:bg-orange-50/60 dark:hover:bg-orange-900/30',
-  },
-  'transition-metal': {
-    colorClass: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/50',
-    activeClass: 'bg-blue-500 text-white border-blue-600 shadow-sm',
-    disabledClass: 'bg-blue-50/40 dark:bg-blue-900/20 text-blue-700/40 dark:text-blue-400/40 border-blue-200/40 dark:border-blue-800/40 hover:bg-blue-50/60 dark:hover:bg-blue-900/30',
-  },
-  'post-transition-metal': {
-    colorClass: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800 hover:bg-cyan-100 dark:hover:bg-cyan-900/50',
-    activeClass: 'bg-cyan-500 text-white border-cyan-600 shadow-sm',
-    disabledClass: 'bg-cyan-50/40 dark:bg-cyan-900/20 text-cyan-700/40 dark:text-cyan-400/40 border-cyan-200/40 dark:border-cyan-800/40 hover:bg-cyan-50/60 dark:hover:bg-cyan-900/30',
-  },
-  'metalloid': {
-    colorClass: 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 border-teal-200 dark:border-teal-800 hover:bg-teal-100 dark:hover:bg-teal-900/50',
-    activeClass: 'bg-teal-500 text-white border-teal-600 shadow-sm',
-    disabledClass: 'bg-teal-50/40 dark:bg-teal-900/20 text-teal-700/40 dark:text-teal-400/40 border-teal-200/40 dark:border-teal-800/40 hover:bg-teal-50/60 dark:hover:bg-teal-900/30',
-  },
-  'halogen': {
-    colorClass: 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/50',
-    activeClass: 'bg-purple-500 text-white border-purple-600 shadow-sm',
-    disabledClass: 'bg-purple-50/40 dark:bg-purple-900/20 text-purple-700/40 dark:text-purple-400/40 border-purple-200/40 dark:border-purple-800/40 hover:bg-purple-50/60 dark:hover:bg-purple-900/30',
-  },
-  'noble-gas': {
-    colorClass: 'bg-slate-50 dark:bg-slate-900/30 text-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900/50',
-    activeClass: 'bg-slate-500 text-white border-slate-600 shadow-sm',
-    disabledClass: 'bg-slate-50/40 dark:bg-slate-900/20 text-slate-700/40 dark:text-slate-400/40 border-slate-200/40 dark:border-slate-800/40 hover:bg-slate-50/60 dark:hover:bg-slate-900/30',
-  },
-};
-
-const ELEMENT_INFO: Record<
-  string,
-  {
-    name: string;
-    category: keyof typeof CATEGORY_STYLES;
-    atomicNumber: number;
-    /** Relative atomic mass (Ar); synthetic/radioactive entries use approximate mass numbers. */
-    relativeAtomicMass: string;
-  }
-> = {
-  // Period 1
-  H: { name: '氢', category: 'reactive-nonmetal', atomicNumber: 1, relativeAtomicMass: '1.008' },
-  He: { name: '氦', category: 'noble-gas', atomicNumber: 2, relativeAtomicMass: '4.003' },
-  // Period 2
-  Li: { name: '锂', category: 'alkali-metal', atomicNumber: 3, relativeAtomicMass: '6.941' },
-  Be: { name: '铍', category: 'alkaline-earth-metal', atomicNumber: 4, relativeAtomicMass: '9.012' },
-  B: { name: '硼', category: 'metalloid', atomicNumber: 5, relativeAtomicMass: '10.81' },
-  C: { name: '碳', category: 'reactive-nonmetal', atomicNumber: 6, relativeAtomicMass: '12.01' },
-  N: { name: '氮', category: 'reactive-nonmetal', atomicNumber: 7, relativeAtomicMass: '14.01' },
-  O: { name: '氧', category: 'reactive-nonmetal', atomicNumber: 8, relativeAtomicMass: '16.00' },
-  F: { name: '氟', category: 'halogen', atomicNumber: 9, relativeAtomicMass: '19.00' },
-  Ne: { name: '氖', category: 'noble-gas', atomicNumber: 10, relativeAtomicMass: '20.18' },
-  // Period 3
-  Na: { name: '钠', category: 'alkali-metal', atomicNumber: 11, relativeAtomicMass: '22.99' },
-  Mg: { name: '镁', category: 'alkaline-earth-metal', atomicNumber: 12, relativeAtomicMass: '24.31' },
-  Al: { name: '铝', category: 'post-transition-metal', atomicNumber: 13, relativeAtomicMass: '26.98' },
-  Si: { name: '硅', category: 'metalloid', atomicNumber: 14, relativeAtomicMass: '28.09' },
-  P: { name: '磷', category: 'reactive-nonmetal', atomicNumber: 15, relativeAtomicMass: '30.97' },
-  S: { name: '硫', category: 'reactive-nonmetal', atomicNumber: 16, relativeAtomicMass: '32.06' },
-  Cl: { name: '氯', category: 'halogen', atomicNumber: 17, relativeAtomicMass: '35.45' },
-  Ar: { name: '氩', category: 'noble-gas', atomicNumber: 18, relativeAtomicMass: '39.95' },
-  // Period 4
-  K: { name: '钾', category: 'alkali-metal', atomicNumber: 19, relativeAtomicMass: '39.10' },
-  Ca: { name: '钙', category: 'alkaline-earth-metal', atomicNumber: 20, relativeAtomicMass: '40.08' },
-  Sc: { name: '钪', category: 'transition-metal', atomicNumber: 21, relativeAtomicMass: '44.96' },
-  Ti: { name: '钛', category: 'transition-metal', atomicNumber: 22, relativeAtomicMass: '47.87' },
-  V: { name: '钒', category: 'transition-metal', atomicNumber: 23, relativeAtomicMass: '50.94' },
-  Cr: { name: '铬', category: 'transition-metal', atomicNumber: 24, relativeAtomicMass: '52.00' },
-  Mn: { name: '锰', category: 'transition-metal', atomicNumber: 25, relativeAtomicMass: '54.94' },
-  Fe: { name: '铁', category: 'transition-metal', atomicNumber: 26, relativeAtomicMass: '55.85' },
-  Co: { name: '钴', category: 'transition-metal', atomicNumber: 27, relativeAtomicMass: '58.93' },
-  Ni: { name: '镍', category: 'transition-metal', atomicNumber: 28, relativeAtomicMass: '58.69' },
-  Cu: { name: '铜', category: 'transition-metal', atomicNumber: 29, relativeAtomicMass: '63.55' },
-  Zn: { name: '锌', category: 'transition-metal', atomicNumber: 30, relativeAtomicMass: '65.38' },
-  Ga: { name: '镓', category: 'post-transition-metal', atomicNumber: 31, relativeAtomicMass: '69.72' },
-  Ge: { name: '锗', category: 'metalloid', atomicNumber: 32, relativeAtomicMass: '72.63' },
-  As: { name: '砷', category: 'metalloid', atomicNumber: 33, relativeAtomicMass: '74.92' },
-  Se: { name: '硒', category: 'reactive-nonmetal', atomicNumber: 34, relativeAtomicMass: '78.96' },
-  Br: { name: '溴', category: 'halogen', atomicNumber: 35, relativeAtomicMass: '79.90' },
-  Kr: { name: '氪', category: 'noble-gas', atomicNumber: 36, relativeAtomicMass: '83.80' },
-  // Period 5
-  Rb: { name: '铷', category: 'alkali-metal', atomicNumber: 37, relativeAtomicMass: '85.47' },
-  Sr: { name: '锶', category: 'alkaline-earth-metal', atomicNumber: 38, relativeAtomicMass: '87.62' },
-  Y: { name: '钇', category: 'transition-metal', atomicNumber: 39, relativeAtomicMass: '88.91' },
-  Zr: { name: '锆', category: 'transition-metal', atomicNumber: 40, relativeAtomicMass: '91.22' },
-  Nb: { name: '铌', category: 'transition-metal', atomicNumber: 41, relativeAtomicMass: '92.91' },
-  Mo: { name: '钼', category: 'transition-metal', atomicNumber: 42, relativeAtomicMass: '95.96' },
-  Tc: { name: '锝', category: 'transition-metal', atomicNumber: 43, relativeAtomicMass: '98' },
-  Ru: { name: '钌', category: 'transition-metal', atomicNumber: 44, relativeAtomicMass: '101.1' },
-  Rh: { name: '铑', category: 'transition-metal', atomicNumber: 45, relativeAtomicMass: '102.9' },
-  Pd: { name: '钯', category: 'transition-metal', atomicNumber: 46, relativeAtomicMass: '106.4' },
-  Ag: { name: '银', category: 'transition-metal', atomicNumber: 47, relativeAtomicMass: '107.9' },
-  Cd: { name: '镉', category: 'transition-metal', atomicNumber: 48, relativeAtomicMass: '112.4' },
-  In: { name: '铟', category: 'post-transition-metal', atomicNumber: 49, relativeAtomicMass: '114.8' },
-  Sn: { name: '锡', category: 'post-transition-metal', atomicNumber: 50, relativeAtomicMass: '118.7' },
-  Sb: { name: '锑', category: 'metalloid', atomicNumber: 51, relativeAtomicMass: '121.8' },
-  Te: { name: '碲', category: 'metalloid', atomicNumber: 52, relativeAtomicMass: '127.6' },
-  I: { name: '碘', category: 'halogen', atomicNumber: 53, relativeAtomicMass: '126.9' },
-  Xe: { name: '氙', category: 'noble-gas', atomicNumber: 54, relativeAtomicMass: '131.3' },
-  // Period 6
-  Cs: { name: '铯', category: 'alkali-metal', atomicNumber: 55, relativeAtomicMass: '132.9' },
-  Ba: { name: '钡', category: 'alkaline-earth-metal', atomicNumber: 56, relativeAtomicMass: '137.3' },
-  La: { name: '镧', category: 'transition-metal', atomicNumber: 57, relativeAtomicMass: '138.9' },
-  Hf: { name: '铪', category: 'transition-metal', atomicNumber: 72, relativeAtomicMass: '178.5' },
-  Ta: { name: '钽', category: 'transition-metal', atomicNumber: 73, relativeAtomicMass: '180.9' },
-  W: { name: '钨', category: 'transition-metal', atomicNumber: 74, relativeAtomicMass: '183.8' },
-  Re: { name: '铼', category: 'transition-metal', atomicNumber: 75, relativeAtomicMass: '186.2' },
-  Os: { name: '锇', category: 'transition-metal', atomicNumber: 76, relativeAtomicMass: '190.2' },
-  Ir: { name: '铱', category: 'transition-metal', atomicNumber: 77, relativeAtomicMass: '192.2' },
-  Pt: { name: '铂', category: 'transition-metal', atomicNumber: 78, relativeAtomicMass: '195.1' },
-  Au: { name: '金', category: 'transition-metal', atomicNumber: 79, relativeAtomicMass: '197.0' },
-  Hg: { name: '汞', category: 'transition-metal', atomicNumber: 80, relativeAtomicMass: '200.6' },
-  Tl: { name: '铊', category: 'post-transition-metal', atomicNumber: 81, relativeAtomicMass: '204.4' },
-  Pb: { name: '铅', category: 'post-transition-metal', atomicNumber: 82, relativeAtomicMass: '207.2' },
-  Bi: { name: '铋', category: 'post-transition-metal', atomicNumber: 83, relativeAtomicMass: '209.0' },
-  Po: { name: '钋', category: 'post-transition-metal', atomicNumber: 84, relativeAtomicMass: '209' },
-  At: { name: '砹', category: 'halogen', atomicNumber: 85, relativeAtomicMass: '210' },
-  Rn: { name: '氡', category: 'noble-gas', atomicNumber: 86, relativeAtomicMass: '222' },
-  // Period 7
-  Fr: { name: '钫', category: 'alkali-metal', atomicNumber: 87, relativeAtomicMass: '223' },
-  Ra: { name: '镭', category: 'alkaline-earth-metal', atomicNumber: 88, relativeAtomicMass: '226' },
-  Ac: { name: '锕', category: 'transition-metal', atomicNumber: 89, relativeAtomicMass: '227' },
-  Rf: { name: '𬬻', category: 'transition-metal', atomicNumber: 104, relativeAtomicMass: '267' },
-  Db: { name: '𬭊', category: 'transition-metal', atomicNumber: 105, relativeAtomicMass: '268' },
-  Sg: { name: '𬭳', category: 'transition-metal', atomicNumber: 106, relativeAtomicMass: '269' },
-  Bh: { name: '𬭛', category: 'transition-metal', atomicNumber: 107, relativeAtomicMass: '270' },
-  Hs: { name: '𬭶', category: 'transition-metal', atomicNumber: 108, relativeAtomicMass: '277' },
-  Mt: { name: '鿏', category: 'transition-metal', atomicNumber: 109, relativeAtomicMass: '278' },
-  Ds: { name: '𫟼', category: 'transition-metal', atomicNumber: 110, relativeAtomicMass: '281' },
-  Rg: { name: '𬬭', category: 'transition-metal', atomicNumber: 111, relativeAtomicMass: '282' },
-  Cn: { name: '鎶', category: 'transition-metal', atomicNumber: 112, relativeAtomicMass: '285' },
-  Nh: { name: '鿭', category: 'post-transition-metal', atomicNumber: 113, relativeAtomicMass: '286' },
-  Fl: { name: '𫓧', category: 'post-transition-metal', atomicNumber: 114, relativeAtomicMass: '289' },
-  Mc: { name: '镆', category: 'post-transition-metal', atomicNumber: 115, relativeAtomicMass: '290' },
-  Lv: { name: '𫟷', category: 'post-transition-metal', atomicNumber: 116, relativeAtomicMass: '293' },
-  Ts: { name: '鿬', category: 'halogen', atomicNumber: 117, relativeAtomicMass: '294' },
-  Og: { name: '鿫', category: 'noble-gas', atomicNumber: 118, relativeAtomicMass: '294' },
-};
-
-const PERIODIC_TABLE_POSITIONS: Record<string, { col: number, row: number }> = {
-  // Period 1
-  H: { col: 1, row: 1 },
-  He: { col: 18, row: 1 },
-  // Period 2
-  Li: { col: 1, row: 2 },
-  Be: { col: 2, row: 2 },
-  B: { col: 13, row: 2 },
-  C: { col: 14, row: 2 },
-  N: { col: 15, row: 2 },
-  O: { col: 16, row: 2 },
-  F: { col: 17, row: 2 },
-  Ne: { col: 18, row: 2 },
-  // Period 3
-  Na: { col: 1, row: 3 },
-  Mg: { col: 2, row: 3 },
-  Al: { col: 13, row: 3 },
-  Si: { col: 14, row: 3 },
-  P: { col: 15, row: 3 },
-  S: { col: 16, row: 3 },
-  Cl: { col: 17, row: 3 },
-  Ar: { col: 18, row: 3 },
-  // Period 4
-  K: { col: 1, row: 4 },
-  Ca: { col: 2, row: 4 },
-  Sc: { col: 3, row: 4 },
-  Ti: { col: 4, row: 4 },
-  V: { col: 5, row: 4 },
-  Cr: { col: 6, row: 4 },
-  Mn: { col: 7, row: 4 },
-  Fe: { col: 8, row: 4 },
-  Co: { col: 9, row: 4 },
-  Ni: { col: 10, row: 4 },
-  Cu: { col: 11, row: 4 },
-  Zn: { col: 12, row: 4 },
-  Ga: { col: 13, row: 4 },
-  Ge: { col: 14, row: 4 },
-  As: { col: 15, row: 4 },
-  Se: { col: 16, row: 4 },
-  Br: { col: 17, row: 4 },
-  Kr: { col: 18, row: 4 },
-  // Period 5
-  Rb: { col: 1, row: 5 },
-  Sr: { col: 2, row: 5 },
-  Y: { col: 3, row: 5 },
-  Zr: { col: 4, row: 5 },
-  Nb: { col: 5, row: 5 },
-  Mo: { col: 6, row: 5 },
-  Tc: { col: 7, row: 5 },
-  Ru: { col: 8, row: 5 },
-  Rh: { col: 9, row: 5 },
-  Pd: { col: 10, row: 5 },
-  Ag: { col: 11, row: 5 },
-  Cd: { col: 12, row: 5 },
-  In: { col: 13, row: 5 },
-  Sn: { col: 14, row: 5 },
-  Sb: { col: 15, row: 5 },
-  Te: { col: 16, row: 5 },
-  I: { col: 17, row: 5 },
-  Xe: { col: 18, row: 5 },
-  // Period 6
-  Cs: { col: 1, row: 6 },
-  Ba: { col: 2, row: 6 },
-  La: { col: 3, row: 6 },
-  Hf: { col: 4, row: 6 },
-  Ta: { col: 5, row: 6 },
-  W: { col: 6, row: 6 },
-  Re: { col: 7, row: 6 },
-  Os: { col: 8, row: 6 },
-  Ir: { col: 9, row: 6 },
-  Pt: { col: 10, row: 6 },
-  Au: { col: 11, row: 6 },
-  Hg: { col: 12, row: 6 },
-  Tl: { col: 13, row: 6 },
-  Pb: { col: 14, row: 6 },
-  Bi: { col: 15, row: 6 },
-  Po: { col: 16, row: 6 },
-  At: { col: 17, row: 6 },
-  Rn: { col: 18, row: 6 },
-  // Period 7
-  Fr: { col: 1, row: 7 },
-  Ra: { col: 2, row: 7 },
-  Ac: { col: 3, row: 7 },
-  Rf: { col: 4, row: 7 },
-  Db: { col: 5, row: 7 },
-  Sg: { col: 6, row: 7 },
-  Bh: { col: 7, row: 7 },
-  Hs: { col: 8, row: 7 },
-  Mt: { col: 9, row: 7 },
-  Ds: { col: 10, row: 7 },
-  Rg: { col: 11, row: 7 },
-  Cn: { col: 12, row: 7 },
-  Nh: { col: 13, row: 7 },
-  Fl: { col: 14, row: 7 },
-  Mc: { col: 15, row: 7 },
-  Lv: { col: 16, row: 7 },
-  Ts: { col: 17, row: 7 },
-  Og: { col: 18, row: 7 },
-};
 
 // 提取方程式中包含的所有元素
 const getEquationElements = (eq: Equation): string[] => {
@@ -405,7 +154,7 @@ export const LearningMode: React.FC = () => {
                 
                 const gridStyle = pos ? { gridColumn: pos.col, gridRow: pos.row } : { gridColumn: 'auto', gridRow: 'auto' };
 
-                let buttonClass = styles.colorClass;
+                let buttonClass: string = styles.colorClass;
                 if (!isPresent) {
                   buttonClass = styles.disabledClass;
                 } else if (isSelected) {
@@ -527,14 +276,11 @@ export const LearningMode: React.FC = () => {
                   <div className="mt-6 flex justify-end relative group">
                     <button
                       type="button"
-                      aria-label={`查看现象：${eq.phenomenon}`}
-                      className="flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 rounded-lg transition-colors text-sm font-medium cursor-default"
+                      aria-label={`实验现象：${eq.phenomenon}`}
+                      title="悬停查看实验现象"
+                      className="inline-flex size-10 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 transition-colors cursor-default text-xl leading-none"
                     >
-                      <span className="text-base leading-none" aria-hidden="true">
-                        {getPhenomenonEmoji(eq.phenomenon)}
-                      </span>
-                      <Info className="w-4 h-4 shrink-0" />
-                      查看现象
+                      <span aria-hidden="true">{getPhenomenonEmoji(eq.phenomenon)}</span>
                     </button>
                     {/* 悬浮提示框 */}
                     <div className="absolute bottom-full right-0 mb-2 w-72 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 pointer-events-none">
