@@ -52,105 +52,111 @@ const CATEGORY_STYLES = {
 
 const ELEMENT_INFO: Record<
   string,
-  { name: string; category: keyof typeof CATEGORY_STYLES; atomicNumber: number }
+  {
+    name: string;
+    category: keyof typeof CATEGORY_STYLES;
+    atomicNumber: number;
+    /** Relative atomic mass (Ar); synthetic/radioactive entries use approximate mass numbers. */
+    relativeAtomicMass: string;
+  }
 > = {
   // Period 1
-  H: { name: '氢', category: 'reactive-nonmetal', atomicNumber: 1 },
-  He: { name: '氦', category: 'noble-gas', atomicNumber: 2 },
+  H: { name: '氢', category: 'reactive-nonmetal', atomicNumber: 1, relativeAtomicMass: '1.008' },
+  He: { name: '氦', category: 'noble-gas', atomicNumber: 2, relativeAtomicMass: '4.003' },
   // Period 2
-  Li: { name: '锂', category: 'alkali-metal', atomicNumber: 3 },
-  Be: { name: '铍', category: 'alkaline-earth-metal', atomicNumber: 4 },
-  B: { name: '硼', category: 'metalloid', atomicNumber: 5 },
-  C: { name: '碳', category: 'reactive-nonmetal', atomicNumber: 6 },
-  N: { name: '氮', category: 'reactive-nonmetal', atomicNumber: 7 },
-  O: { name: '氧', category: 'reactive-nonmetal', atomicNumber: 8 },
-  F: { name: '氟', category: 'halogen', atomicNumber: 9 },
-  Ne: { name: '氖', category: 'noble-gas', atomicNumber: 10 },
+  Li: { name: '锂', category: 'alkali-metal', atomicNumber: 3, relativeAtomicMass: '6.941' },
+  Be: { name: '铍', category: 'alkaline-earth-metal', atomicNumber: 4, relativeAtomicMass: '9.012' },
+  B: { name: '硼', category: 'metalloid', atomicNumber: 5, relativeAtomicMass: '10.81' },
+  C: { name: '碳', category: 'reactive-nonmetal', atomicNumber: 6, relativeAtomicMass: '12.01' },
+  N: { name: '氮', category: 'reactive-nonmetal', atomicNumber: 7, relativeAtomicMass: '14.01' },
+  O: { name: '氧', category: 'reactive-nonmetal', atomicNumber: 8, relativeAtomicMass: '16.00' },
+  F: { name: '氟', category: 'halogen', atomicNumber: 9, relativeAtomicMass: '19.00' },
+  Ne: { name: '氖', category: 'noble-gas', atomicNumber: 10, relativeAtomicMass: '20.18' },
   // Period 3
-  Na: { name: '钠', category: 'alkali-metal', atomicNumber: 11 },
-  Mg: { name: '镁', category: 'alkaline-earth-metal', atomicNumber: 12 },
-  Al: { name: '铝', category: 'post-transition-metal', atomicNumber: 13 },
-  Si: { name: '硅', category: 'metalloid', atomicNumber: 14 },
-  P: { name: '磷', category: 'reactive-nonmetal', atomicNumber: 15 },
-  S: { name: '硫', category: 'reactive-nonmetal', atomicNumber: 16 },
-  Cl: { name: '氯', category: 'halogen', atomicNumber: 17 },
-  Ar: { name: '氩', category: 'noble-gas', atomicNumber: 18 },
+  Na: { name: '钠', category: 'alkali-metal', atomicNumber: 11, relativeAtomicMass: '22.99' },
+  Mg: { name: '镁', category: 'alkaline-earth-metal', atomicNumber: 12, relativeAtomicMass: '24.31' },
+  Al: { name: '铝', category: 'post-transition-metal', atomicNumber: 13, relativeAtomicMass: '26.98' },
+  Si: { name: '硅', category: 'metalloid', atomicNumber: 14, relativeAtomicMass: '28.09' },
+  P: { name: '磷', category: 'reactive-nonmetal', atomicNumber: 15, relativeAtomicMass: '30.97' },
+  S: { name: '硫', category: 'reactive-nonmetal', atomicNumber: 16, relativeAtomicMass: '32.06' },
+  Cl: { name: '氯', category: 'halogen', atomicNumber: 17, relativeAtomicMass: '35.45' },
+  Ar: { name: '氩', category: 'noble-gas', atomicNumber: 18, relativeAtomicMass: '39.95' },
   // Period 4
-  K: { name: '钾', category: 'alkali-metal', atomicNumber: 19 },
-  Ca: { name: '钙', category: 'alkaline-earth-metal', atomicNumber: 20 },
-  Sc: { name: '钪', category: 'transition-metal', atomicNumber: 21 },
-  Ti: { name: '钛', category: 'transition-metal', atomicNumber: 22 },
-  V: { name: '钒', category: 'transition-metal', atomicNumber: 23 },
-  Cr: { name: '铬', category: 'transition-metal', atomicNumber: 24 },
-  Mn: { name: '锰', category: 'transition-metal', atomicNumber: 25 },
-  Fe: { name: '铁', category: 'transition-metal', atomicNumber: 26 },
-  Co: { name: '钴', category: 'transition-metal', atomicNumber: 27 },
-  Ni: { name: '镍', category: 'transition-metal', atomicNumber: 28 },
-  Cu: { name: '铜', category: 'transition-metal', atomicNumber: 29 },
-  Zn: { name: '锌', category: 'transition-metal', atomicNumber: 30 },
-  Ga: { name: '镓', category: 'post-transition-metal', atomicNumber: 31 },
-  Ge: { name: '锗', category: 'metalloid', atomicNumber: 32 },
-  As: { name: '砷', category: 'metalloid', atomicNumber: 33 },
-  Se: { name: '硒', category: 'reactive-nonmetal', atomicNumber: 34 },
-  Br: { name: '溴', category: 'halogen', atomicNumber: 35 },
-  Kr: { name: '氪', category: 'noble-gas', atomicNumber: 36 },
+  K: { name: '钾', category: 'alkali-metal', atomicNumber: 19, relativeAtomicMass: '39.10' },
+  Ca: { name: '钙', category: 'alkaline-earth-metal', atomicNumber: 20, relativeAtomicMass: '40.08' },
+  Sc: { name: '钪', category: 'transition-metal', atomicNumber: 21, relativeAtomicMass: '44.96' },
+  Ti: { name: '钛', category: 'transition-metal', atomicNumber: 22, relativeAtomicMass: '47.87' },
+  V: { name: '钒', category: 'transition-metal', atomicNumber: 23, relativeAtomicMass: '50.94' },
+  Cr: { name: '铬', category: 'transition-metal', atomicNumber: 24, relativeAtomicMass: '52.00' },
+  Mn: { name: '锰', category: 'transition-metal', atomicNumber: 25, relativeAtomicMass: '54.94' },
+  Fe: { name: '铁', category: 'transition-metal', atomicNumber: 26, relativeAtomicMass: '55.85' },
+  Co: { name: '钴', category: 'transition-metal', atomicNumber: 27, relativeAtomicMass: '58.93' },
+  Ni: { name: '镍', category: 'transition-metal', atomicNumber: 28, relativeAtomicMass: '58.69' },
+  Cu: { name: '铜', category: 'transition-metal', atomicNumber: 29, relativeAtomicMass: '63.55' },
+  Zn: { name: '锌', category: 'transition-metal', atomicNumber: 30, relativeAtomicMass: '65.38' },
+  Ga: { name: '镓', category: 'post-transition-metal', atomicNumber: 31, relativeAtomicMass: '69.72' },
+  Ge: { name: '锗', category: 'metalloid', atomicNumber: 32, relativeAtomicMass: '72.63' },
+  As: { name: '砷', category: 'metalloid', atomicNumber: 33, relativeAtomicMass: '74.92' },
+  Se: { name: '硒', category: 'reactive-nonmetal', atomicNumber: 34, relativeAtomicMass: '78.96' },
+  Br: { name: '溴', category: 'halogen', atomicNumber: 35, relativeAtomicMass: '79.90' },
+  Kr: { name: '氪', category: 'noble-gas', atomicNumber: 36, relativeAtomicMass: '83.80' },
   // Period 5
-  Rb: { name: '铷', category: 'alkali-metal', atomicNumber: 37 },
-  Sr: { name: '锶', category: 'alkaline-earth-metal', atomicNumber: 38 },
-  Y: { name: '钇', category: 'transition-metal', atomicNumber: 39 },
-  Zr: { name: '锆', category: 'transition-metal', atomicNumber: 40 },
-  Nb: { name: '铌', category: 'transition-metal', atomicNumber: 41 },
-  Mo: { name: '钼', category: 'transition-metal', atomicNumber: 42 },
-  Tc: { name: '锝', category: 'transition-metal', atomicNumber: 43 },
-  Ru: { name: '钌', category: 'transition-metal', atomicNumber: 44 },
-  Rh: { name: '铑', category: 'transition-metal', atomicNumber: 45 },
-  Pd: { name: '钯', category: 'transition-metal', atomicNumber: 46 },
-  Ag: { name: '银', category: 'transition-metal', atomicNumber: 47 },
-  Cd: { name: '镉', category: 'transition-metal', atomicNumber: 48 },
-  In: { name: '铟', category: 'post-transition-metal', atomicNumber: 49 },
-  Sn: { name: '锡', category: 'post-transition-metal', atomicNumber: 50 },
-  Sb: { name: '锑', category: 'metalloid', atomicNumber: 51 },
-  Te: { name: '碲', category: 'metalloid', atomicNumber: 52 },
-  I: { name: '碘', category: 'halogen', atomicNumber: 53 },
-  Xe: { name: '氙', category: 'noble-gas', atomicNumber: 54 },
+  Rb: { name: '铷', category: 'alkali-metal', atomicNumber: 37, relativeAtomicMass: '85.47' },
+  Sr: { name: '锶', category: 'alkaline-earth-metal', atomicNumber: 38, relativeAtomicMass: '87.62' },
+  Y: { name: '钇', category: 'transition-metal', atomicNumber: 39, relativeAtomicMass: '88.91' },
+  Zr: { name: '锆', category: 'transition-metal', atomicNumber: 40, relativeAtomicMass: '91.22' },
+  Nb: { name: '铌', category: 'transition-metal', atomicNumber: 41, relativeAtomicMass: '92.91' },
+  Mo: { name: '钼', category: 'transition-metal', atomicNumber: 42, relativeAtomicMass: '95.96' },
+  Tc: { name: '锝', category: 'transition-metal', atomicNumber: 43, relativeAtomicMass: '98' },
+  Ru: { name: '钌', category: 'transition-metal', atomicNumber: 44, relativeAtomicMass: '101.1' },
+  Rh: { name: '铑', category: 'transition-metal', atomicNumber: 45, relativeAtomicMass: '102.9' },
+  Pd: { name: '钯', category: 'transition-metal', atomicNumber: 46, relativeAtomicMass: '106.4' },
+  Ag: { name: '银', category: 'transition-metal', atomicNumber: 47, relativeAtomicMass: '107.9' },
+  Cd: { name: '镉', category: 'transition-metal', atomicNumber: 48, relativeAtomicMass: '112.4' },
+  In: { name: '铟', category: 'post-transition-metal', atomicNumber: 49, relativeAtomicMass: '114.8' },
+  Sn: { name: '锡', category: 'post-transition-metal', atomicNumber: 50, relativeAtomicMass: '118.7' },
+  Sb: { name: '锑', category: 'metalloid', atomicNumber: 51, relativeAtomicMass: '121.8' },
+  Te: { name: '碲', category: 'metalloid', atomicNumber: 52, relativeAtomicMass: '127.6' },
+  I: { name: '碘', category: 'halogen', atomicNumber: 53, relativeAtomicMass: '126.9' },
+  Xe: { name: '氙', category: 'noble-gas', atomicNumber: 54, relativeAtomicMass: '131.3' },
   // Period 6
-  Cs: { name: '铯', category: 'alkali-metal', atomicNumber: 55 },
-  Ba: { name: '钡', category: 'alkaline-earth-metal', atomicNumber: 56 },
-  La: { name: '镧', category: 'transition-metal', atomicNumber: 57 },
-  Hf: { name: '铪', category: 'transition-metal', atomicNumber: 72 },
-  Ta: { name: '钽', category: 'transition-metal', atomicNumber: 73 },
-  W: { name: '钨', category: 'transition-metal', atomicNumber: 74 },
-  Re: { name: '铼', category: 'transition-metal', atomicNumber: 75 },
-  Os: { name: '锇', category: 'transition-metal', atomicNumber: 76 },
-  Ir: { name: '铱', category: 'transition-metal', atomicNumber: 77 },
-  Pt: { name: '铂', category: 'transition-metal', atomicNumber: 78 },
-  Au: { name: '金', category: 'transition-metal', atomicNumber: 79 },
-  Hg: { name: '汞', category: 'transition-metal', atomicNumber: 80 },
-  Tl: { name: '铊', category: 'post-transition-metal', atomicNumber: 81 },
-  Pb: { name: '铅', category: 'post-transition-metal', atomicNumber: 82 },
-  Bi: { name: '铋', category: 'post-transition-metal', atomicNumber: 83 },
-  Po: { name: '钋', category: 'post-transition-metal', atomicNumber: 84 },
-  At: { name: '砹', category: 'halogen', atomicNumber: 85 },
-  Rn: { name: '氡', category: 'noble-gas', atomicNumber: 86 },
+  Cs: { name: '铯', category: 'alkali-metal', atomicNumber: 55, relativeAtomicMass: '132.9' },
+  Ba: { name: '钡', category: 'alkaline-earth-metal', atomicNumber: 56, relativeAtomicMass: '137.3' },
+  La: { name: '镧', category: 'transition-metal', atomicNumber: 57, relativeAtomicMass: '138.9' },
+  Hf: { name: '铪', category: 'transition-metal', atomicNumber: 72, relativeAtomicMass: '178.5' },
+  Ta: { name: '钽', category: 'transition-metal', atomicNumber: 73, relativeAtomicMass: '180.9' },
+  W: { name: '钨', category: 'transition-metal', atomicNumber: 74, relativeAtomicMass: '183.8' },
+  Re: { name: '铼', category: 'transition-metal', atomicNumber: 75, relativeAtomicMass: '186.2' },
+  Os: { name: '锇', category: 'transition-metal', atomicNumber: 76, relativeAtomicMass: '190.2' },
+  Ir: { name: '铱', category: 'transition-metal', atomicNumber: 77, relativeAtomicMass: '192.2' },
+  Pt: { name: '铂', category: 'transition-metal', atomicNumber: 78, relativeAtomicMass: '195.1' },
+  Au: { name: '金', category: 'transition-metal', atomicNumber: 79, relativeAtomicMass: '197.0' },
+  Hg: { name: '汞', category: 'transition-metal', atomicNumber: 80, relativeAtomicMass: '200.6' },
+  Tl: { name: '铊', category: 'post-transition-metal', atomicNumber: 81, relativeAtomicMass: '204.4' },
+  Pb: { name: '铅', category: 'post-transition-metal', atomicNumber: 82, relativeAtomicMass: '207.2' },
+  Bi: { name: '铋', category: 'post-transition-metal', atomicNumber: 83, relativeAtomicMass: '209.0' },
+  Po: { name: '钋', category: 'post-transition-metal', atomicNumber: 84, relativeAtomicMass: '209' },
+  At: { name: '砹', category: 'halogen', atomicNumber: 85, relativeAtomicMass: '210' },
+  Rn: { name: '氡', category: 'noble-gas', atomicNumber: 86, relativeAtomicMass: '222' },
   // Period 7
-  Fr: { name: '钫', category: 'alkali-metal', atomicNumber: 87 },
-  Ra: { name: '镭', category: 'alkaline-earth-metal', atomicNumber: 88 },
-  Ac: { name: '锕', category: 'transition-metal', atomicNumber: 89 },
-  Rf: { name: '𬬻', category: 'transition-metal', atomicNumber: 104 },
-  Db: { name: '𬭊', category: 'transition-metal', atomicNumber: 105 },
-  Sg: { name: '𬭳', category: 'transition-metal', atomicNumber: 106 },
-  Bh: { name: '𬭛', category: 'transition-metal', atomicNumber: 107 },
-  Hs: { name: '𬭶', category: 'transition-metal', atomicNumber: 108 },
-  Mt: { name: '鿏', category: 'transition-metal', atomicNumber: 109 },
-  Ds: { name: '𫟼', category: 'transition-metal', atomicNumber: 110 },
-  Rg: { name: '𬬭', category: 'transition-metal', atomicNumber: 111 },
-  Cn: { name: '鎶', category: 'transition-metal', atomicNumber: 112 },
-  Nh: { name: '鿭', category: 'post-transition-metal', atomicNumber: 113 },
-  Fl: { name: '𫓧', category: 'post-transition-metal', atomicNumber: 114 },
-  Mc: { name: '镆', category: 'post-transition-metal', atomicNumber: 115 },
-  Lv: { name: '𫟷', category: 'post-transition-metal', atomicNumber: 116 },
-  Ts: { name: '鿬', category: 'halogen', atomicNumber: 117 },
-  Og: { name: '鿫', category: 'noble-gas', atomicNumber: 118 },
+  Fr: { name: '钫', category: 'alkali-metal', atomicNumber: 87, relativeAtomicMass: '223' },
+  Ra: { name: '镭', category: 'alkaline-earth-metal', atomicNumber: 88, relativeAtomicMass: '226' },
+  Ac: { name: '锕', category: 'transition-metal', atomicNumber: 89, relativeAtomicMass: '227' },
+  Rf: { name: '𬬻', category: 'transition-metal', atomicNumber: 104, relativeAtomicMass: '267' },
+  Db: { name: '𬭊', category: 'transition-metal', atomicNumber: 105, relativeAtomicMass: '268' },
+  Sg: { name: '𬭳', category: 'transition-metal', atomicNumber: 106, relativeAtomicMass: '269' },
+  Bh: { name: '𬭛', category: 'transition-metal', atomicNumber: 107, relativeAtomicMass: '270' },
+  Hs: { name: '𬭶', category: 'transition-metal', atomicNumber: 108, relativeAtomicMass: '277' },
+  Mt: { name: '鿏', category: 'transition-metal', atomicNumber: 109, relativeAtomicMass: '278' },
+  Ds: { name: '𫟼', category: 'transition-metal', atomicNumber: 110, relativeAtomicMass: '281' },
+  Rg: { name: '𬬭', category: 'transition-metal', atomicNumber: 111, relativeAtomicMass: '282' },
+  Cn: { name: '鎶', category: 'transition-metal', atomicNumber: 112, relativeAtomicMass: '285' },
+  Nh: { name: '鿭', category: 'post-transition-metal', atomicNumber: 113, relativeAtomicMass: '286' },
+  Fl: { name: '𫓧', category: 'post-transition-metal', atomicNumber: 114, relativeAtomicMass: '289' },
+  Mc: { name: '镆', category: 'post-transition-metal', atomicNumber: 115, relativeAtomicMass: '290' },
+  Lv: { name: '𫟷', category: 'post-transition-metal', atomicNumber: 116, relativeAtomicMass: '293' },
+  Ts: { name: '鿬', category: 'halogen', atomicNumber: 117, relativeAtomicMass: '294' },
+  Og: { name: '鿫', category: 'noble-gas', atomicNumber: 118, relativeAtomicMass: '294' },
 };
 
 const PERIODIC_TABLE_POSITIONS: Record<string, { col: number, row: number }> = {
@@ -384,10 +390,10 @@ export const LearningMode: React.FC = () => {
             <div 
               style={{ 
                 display: 'grid', 
-                gridTemplateColumns: 'repeat(18, minmax(42px, 1fr))', 
-                gridTemplateRows: 'repeat(7, minmax(52px, 1fr))',
+                gridTemplateColumns: 'repeat(18, minmax(46px, 1fr))', 
+                gridTemplateRows: 'repeat(7, minmax(58px, 1fr))',
                 gap: '6px',
-                minWidth: '800px'
+                minWidth: '860px'
               }}
             >
               {Object.keys(PERIODIC_TABLE_POSITIONS).map(elem => {
@@ -412,30 +418,60 @@ export const LearningMode: React.FC = () => {
                     onClick={() => isPresent && toggleElement(elem)}
                     disabled={!isPresent}
                     style={gridStyle}
-                    className={`relative flex flex-col items-center justify-center p-1 pt-3 rounded-lg text-sm transition-all border shadow-sm ${
+                    className={`relative flex h-full min-h-0 flex-col items-center px-1 pt-5 pb-1 rounded-lg text-sm transition-all border shadow-sm ${
                       isPresent ? 'hover:shadow' : ''
                     } ${buttonClass}`}
                     title={
                       info?.name
-                        ? `${elem} (${info.atomicNumber}) ${info.name}${!isPresent ? ' (无相关方程式)' : ''}`
+                        ? `${elem}（${info.atomicNumber}）${info.name}，相对原子质量 ${info.relativeAtomicMass}${
+                            !isPresent ? '（无相关方程式）' : ''
+                          }`
                         : elem
                     }
                   >
                     {info && (
+                      <>
+                        <span
+                          className={`absolute top-0.5 left-1 z-[1] text-[10px] font-semibold tabular-nums leading-none ${
+                            isSelected
+                              ? 'text-white'
+                              : !isPresent
+                                ? 'text-slate-300 dark:text-slate-300'
+                                : 'opacity-95'
+                          }`}
+                        >
+                          {info.atomicNumber}
+                        </span>
+                        <span
+                          className={`absolute top-0.5 right-1 z-[1] max-w-[55%] truncate text-right text-[9px] font-medium leading-tight ${
+                            isSelected
+                              ? 'text-white'
+                              : !isPresent
+                                ? 'text-slate-300 dark:text-slate-300'
+                                : 'opacity-90'
+                          }`}
+                          title={info.name}
+                        >
+                          {info.name}
+                        </span>
+                      </>
+                    )}
+                    <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+                      <span className="font-bold text-xl leading-none">{elem}</span>
+                    </div>
+                    {info && (
                       <span
-                        className={`absolute top-0.5 left-1 z-[1] text-[10px] font-semibold tabular-nums leading-none ${
+                        className={`mb-0 w-full shrink-0 px-0.5 pb-0.5 text-center text-[8px] font-medium tabular-nums leading-none ${
                           isSelected
-                            ? 'text-white'
+                            ? 'text-white/90'
                             : !isPresent
                               ? 'text-slate-300 dark:text-slate-300'
-                              : 'opacity-95'
+                              : 'opacity-85'
                         }`}
                       >
-                        {info.atomicNumber}
+                        {info.relativeAtomicMass}
                       </span>
                     )}
-                    <span className="font-bold text-base leading-none mb-0.5">{elem}</span>
-                    {info?.name && <span className="text-[10px] opacity-80 leading-none">{info.name}</span>}
                   </button>
                 );
               })}
