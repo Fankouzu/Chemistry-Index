@@ -423,8 +423,12 @@ export const LearningMode: React.FC = () => {
                   >
                     {info && (
                       <span
-                        className={`absolute top-0.5 left-1 text-[9px] font-medium tabular-nums leading-none ${
-                          isSelected ? 'text-white/90' : 'opacity-70'
+                        className={`absolute top-0.5 left-1 z-[1] text-[10px] font-semibold tabular-nums leading-none ${
+                          isSelected
+                            ? 'text-white'
+                            : !isPresent
+                              ? 'text-slate-300 dark:text-slate-300'
+                              : 'opacity-95'
                         }`}
                       >
                         {info.atomicNumber}
