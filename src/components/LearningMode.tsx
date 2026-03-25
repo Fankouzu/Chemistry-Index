@@ -287,37 +287,40 @@ export const LearningMode: React.FC = () => {
               key={eq.id}
               className="rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
             >
-              <div className="bg-gray-50/80 dark:bg-gray-800/50 px-6 py-3 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  <h3 className="font-bold text-gray-800 dark:text-gray-100">{eq.description}</h3>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                    eq.difficulty === '初级' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
-                    eq.difficulty === '中级' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
-                    'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                  }`}>
-                    {eq.difficulty}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-medium px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full">
-                    {eq.type}
-                  </span>
-                  <button
-                    onClick={() => toggleFavorite(eq.id)}
-                    className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors focus:outline-none"
-                    title={favorites.includes(eq.id) ? "取消收藏" : "加入收藏"}
-                  >
-                    <Heart className={`w-5 h-5 ${favorites.includes(eq.id) ? 'fill-red-500 text-red-500' : ''}`} />
-                  </button>
-                </div>
+              <div className="bg-gray-50/80 dark:bg-gray-800/50 px-6 py-3 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center gap-3">
+                <h3 className="min-w-0 flex-1 font-bold text-gray-800 dark:text-gray-100">{eq.description}</h3>
+                <button
+                  type="button"
+                  onClick={() => toggleFavorite(eq.id)}
+                  className="shrink-0 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors focus:outline-none"
+                  title={favorites.includes(eq.id) ? "取消收藏" : "加入收藏"}
+                >
+                  <Heart className={`w-5 h-5 ${favorites.includes(eq.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                </button>
               </div>
               <div className="p-6">
                 <EquationDisplay equation={eq} />
-                
-                {eq.phenomenon && (
-                  <div className="mt-6 flex w-full justify-end">
+
+                <div className="mt-4 flex min-w-0 items-center gap-3">
+                  <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                    <span
+                      className={`text-xs font-bold px-2 py-0.5 rounded ${
+                        eq.difficulty === '初级'
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                          : eq.difficulty === '中级'
+                            ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                            : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                      }`}
+                    >
+                      {eq.difficulty}
+                    </span>
+                    <span className="text-xs font-medium rounded-full bg-blue-100 px-2.5 py-1 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                      {eq.type}
+                    </span>
+                  </div>
+                  {eq.phenomenon && (
                     <div
-                      className="relative inline-flex flex-col items-end p-3 -m-3 sm:p-4 sm:-m-4"
+                      className="relative inline-flex shrink-0 flex-col items-end p-3 -m-3 sm:p-4 sm:-m-4"
                       data-phenomenon-popover-root
                       onMouseEnter={() => {
                         if (!phenomenonHoverCapable) return;
@@ -401,8 +404,8 @@ export const LearningMode: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </motion.div>
           ))

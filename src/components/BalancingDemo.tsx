@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { Equation } from '../data/equations';
 import { EquationDisplay } from './EquationDisplay';
 import { Play, Pause, ChevronLeft, ChevronRight, X, Check } from 'lucide-react';
@@ -97,27 +98,33 @@ export const BalancingDemo: React.FC<BalancingDemoProps> = ({ equation, onClose 
     return () => clearTimeout(timer);
   }, [isPlaying, stepIndex, steps.length]);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-      <motion.div 
+  // Portal to body + z above App header (z-50): fixed inside <main z-0> cannot stack above the sticky header.
+  const modal = (
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900/60 p-4 pt-[max(1rem,env(safe-area-inset-top))] backdrop-blur-sm"
+      role="presentation"
+    >
+      <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] border border-gray-200 dark:border-gray-800"
+        className="flex max-h-[min(90vh,calc(100dvh-env(safe-area-inset-top,0px)-2rem))] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900"
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
+        {/* Header — relative z so it stays above scrollable demo content */}
+        <div className="relative z-10 flex shrink-0 items-center justify-between border-b border-gray-100 bg-gray-50/50 px-6 py-4 dark:border-gray-800 dark:bg-gray-800/50">
           <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">配平动画演示</h3>
-          <button 
+          <button
+            type="button"
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+            className="relative z-10 p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-200 rounded-full"
           >
-            <X className="w-6 h-6" />
+            <X className="h-6 w-6" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 md:p-8 overflow-y-auto flex-1">
+        <div className="relative z-0 min-h-0 flex-1 overflow-y-auto p-6 md:p-8">
           {/* Equation Display */}
           <div className="min-h-[120px] flex items-center justify-center bg-blue-50/30 dark:bg-blue-900/10 rounded-2xl border border-blue-100/50 dark:border-blue-900/30 mb-8 p-4">
             <EquationDisplay equation={stepEquation} showCoefficients={true} interactive={false} />
@@ -181,7 +188,7 @@ export const BalancingDemo: React.FC<BalancingDemoProps> = ({ equation, onClose 
         </div>
 
         {/* Controls */}
-        <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
+        <div className="relative z-10 flex shrink-0 items-center justify-between border-t border-gray-100 bg-gray-50 px-6 py-4 dark:border-gray-800 dark:bg-gray-800/50">
           <button
             onClick={() => setStepIndex(s => Math.max(0, s - 1))}
             disabled={stepIndex === 0}
@@ -216,4 +223,6 @@ export const BalancingDemo: React.FC<BalancingDemoProps> = ({ equation, onClose 
       </motion.div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 };

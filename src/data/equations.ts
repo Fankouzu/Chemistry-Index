@@ -111,7 +111,7 @@ export const equations: Equation[] = [
   },
   {
     id: '10',
-    description: '生石灰溶于水',
+    description: '生石灰和水反应（制取熟石灰）',
     reactants: [{ formula: 'CaO', coef: 1 }, { formula: 'H2O', coef: 1 }],
     products: [{ formula: 'Ca(OH)2', coef: 1 }],
     conditions: '',
@@ -327,7 +327,7 @@ export const equations: Equation[] = [
   // 复分解反应
   {
     id: '22',
-    description: '盐酸和氢氧化钠反应',
+    description: '盐酸和氢氧化钠反应（盐酸和火碱）',
     reactants: [{ formula: 'HCl', coef: 1 }, { formula: 'NaOH', coef: 1 }],
     products: [{ formula: 'NaCl', coef: 1 }, { formula: 'H2O', coef: 1 }],
     conditions: '',
@@ -367,7 +367,7 @@ export const equations: Equation[] = [
   },
   {
     id: '30',
-    description: '氧化铁与稀盐酸反应',
+    description: '氧化铁和稀盐酸反应（盐酸除铁锈）',
     reactants: [{ formula: 'Fe2O3', coef: 1 }, { formula: 'HCl', coef: 6 }],
     products: [{ formula: 'FeCl3', coef: 2 }, { formula: 'H2O', coef: 3 }],
     conditions: '',
@@ -377,7 +377,7 @@ export const equations: Equation[] = [
   },
   {
     id: '37',
-    description: '硫酸和氢氧化钠反应',
+    description: '氢氧化钠和稀硫酸反应（硫酸和氢氧化钠）',
     reactants: [{ formula: 'H2SO4', coef: 1 }, { formula: 'NaOH', coef: 2 }],
     products: [{ formula: 'Na2SO4', coef: 1 }, { formula: 'H2O', coef: 2 }],
     conditions: '',
@@ -417,7 +417,7 @@ export const equations: Equation[] = [
   },
   {
     id: '45',
-    description: '氧化铁和稀硫酸反应',
+    description: '氧化铁和稀硫酸反应（稀硫酸除铁锈）',
     reactants: [{ formula: 'Fe2O3', coef: 1 }, { formula: 'H2SO4', coef: 3 }],
     products: [{ formula: 'Fe2(SO4)3', coef: 1 }, { formula: 'H2O', coef: 3 }],
     conditions: '',
@@ -455,6 +455,66 @@ export const equations: Equation[] = [
     type: '复分解反应',
     difficulty: '高级'
   },
+  {
+    id: '53',
+    description: '氧化铜和稀盐酸反应',
+    reactants: [{ formula: 'CuO', coef: 1 }, { formula: 'HCl', coef: 2 }],
+    products: [{ formula: 'CuCl2', coef: 1 }, { formula: 'H2O', coef: 1 }],
+    conditions: '',
+    phenomenon: '黑色粉末逐渐溶解，溶液由无色变成蓝色',
+    type: '复分解反应',
+    difficulty: '初级'
+  },
+  {
+    id: '54',
+    description: '烧碱和三氧化硫反应',
+    reactants: [{ formula: 'NaOH', coef: 2 }, { formula: 'SO3', coef: 1 }],
+    products: [{ formula: 'Na2SO4', coef: 1 }, { formula: 'H2O', coef: 1 }],
+    conditions: '',
+    phenomenon: '无明显现象',
+    type: '其他',
+    difficulty: '中级'
+  },
+  {
+    id: '55',
+    description: '盐酸和氢氧化钙反应（盐酸和消石灰）',
+    reactants: [{ formula: 'HCl', coef: 2 }, { formula: 'Ca(OH)2', coef: 1 }],
+    products: [{ formula: 'CaCl2', coef: 1 }, { formula: 'H2O', coef: 2 }],
+    conditions: '',
+    phenomenon: '无明显现象（需借助指示剂），放出热量',
+    type: '复分解反应',
+    difficulty: '初级'
+  },
+  {
+    id: '56',
+    description: '熟石灰中和硫酸厂废水（氢氧化钙和稀硫酸）',
+    reactants: [{ formula: 'Ca(OH)2', coef: 1 }, { formula: 'H2SO4', coef: 1 }],
+    products: [{ formula: 'CaSO4', coef: 1 }, { formula: 'H2O', coef: 2 }],
+    conditions: '',
+    phenomenon: '无明显现象（需借助指示剂），放出热量',
+    type: '复分解反应',
+    difficulty: '初级'
+  },
+  {
+    id: '57',
+    description: '氢氧化镁药物治疗胃酸过多',
+    reactants: [{ formula: 'Mg(OH)2', coef: 1 }, { formula: 'HCl', coef: 2 }],
+    products: [{ formula: 'MgCl2', coef: 1 }, { formula: 'H2O', coef: 2 }],
+    conditions: '',
+    phenomenon: '固体逐渐溶解',
+    type: '复分解反应',
+    difficulty: '初级'
+  },
+  {
+    id: '58',
+    description: '氢氧化铝药物治疗胃酸过多',
+    reactants: [{ formula: 'Al(OH)3', coef: 1 }, { formula: 'HCl', coef: 3 }],
+    products: [{ formula: 'AlCl3', coef: 1 }, { formula: 'H2O', coef: 3 }],
+    conditions: '',
+    phenomenon: '固体逐渐溶解',
+    type: '复分解反应',
+    difficulty: '初级'
+  },
 
   // 其他/高级配平
   {
@@ -469,7 +529,7 @@ export const equations: Equation[] = [
   },
   {
     id: '27',
-    description: '二氧化碳使澄清石灰水变浑浊',
+    description: '二氧化碳使澄清石灰水变浑浊（石灰水在空气中变质）',
     reactants: [{ formula: 'CO2', coef: 1 }, { formula: 'Ca(OH)2', coef: 1 }],
     products: [{ formula: 'CaCO3↓', coef: 1 }, { formula: 'H2O', coef: 1 }],
     conditions: '',
@@ -519,7 +579,7 @@ export const equations: Equation[] = [
   },
   {
     id: '35',
-    description: '氢氧化钠吸收二氧化碳',
+    description: '氢氧化钠吸收二氧化碳（氢氧化钠在空气中变质）',
     reactants: [{ formula: 'NaOH', coef: 2 }, { formula: 'CO2', coef: 1 }],
     products: [{ formula: 'Na2CO3', coef: 1 }, { formula: 'H2O', coef: 1 }],
     conditions: '',
@@ -529,7 +589,7 @@ export const equations: Equation[] = [
   },
   {
     id: '36',
-    description: '氢氧化钠吸收二氧化硫',
+    description: '苛性钠溶液吸收二氧化硫（氢氧化钠吸收二氧化硫）',
     reactants: [{ formula: 'NaOH', coef: 2 }, { formula: 'SO2', coef: 1 }],
     products: [{ formula: 'Na2SO3', coef: 1 }, { formula: 'H2O', coef: 1 }],
     conditions: '',
