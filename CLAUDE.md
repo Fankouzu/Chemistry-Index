@@ -31,6 +31,7 @@ npm run cap:open:android  # Open Android Studio (requires Android SDK / ANDROID_
 - **Android release**: Copy `android/keystore.properties.example` to `android/keystore.properties` (gitignored), point `storeFile` at your `.jks`, then **Build → Generate Signed Bundle** in Android Studio, or `./gradlew bundleRelease` from `android/`.
 - **Store checklist / privacy template**: `docs/STORE_RELEASE.md`, `PRIVACY.md` (host publicly before release).
 - **iOS lifecycle**: The app uses **UIScene** (`SceneDelegate.swift`) + `UIApplicationSceneManifest` in `Info.plist`.
+- **GitHub Actions**: `.github/workflows/mobile-release.yml` builds Android (AAB with secrets, else debug APK) and iOS Simulator Release — see `docs/MOBILE_CI.md`.
 - **Git / Vercel**: Branch **`web`** holds the deployable web app; **Vercel production** should track **`web`**. **`main`** carries Capacitor (`ios/`, `android/`) and mobile-related changes. Configure the production branch in the Vercel project (Settings → Git).
 
 ## Architecture

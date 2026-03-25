@@ -88,6 +88,15 @@ npm run cap:open:android  # Android Studio
 - **Store checklist:** [`docs/STORE_RELEASE.md`](docs/STORE_RELEASE.md)  
 - **Privacy template (English):** [`PRIVACY.md`](PRIVACY.md) — host a public URL for store consoles; in-app copy stays in sync via `PrivacyPolicyPanel`
 
+### CI — automated mobile builds
+
+GitHub Actions workflow **[Mobile release](.github/workflows/mobile-release.yml)** runs on **`workflow_dispatch`** and on **`v*`** tags:
+
+- **Android:** signed **`.aab`** when keystore secrets are configured; otherwise a **debug `.apk`** for pipeline smoke tests.  
+- **iOS:** **Simulator Release** build artifact (not an App Store IPA).  
+
+Setup and secret names: **[`docs/MOBILE_CI.md`](docs/MOBILE_CI.md)**.
+
 ---
 
 ## Documentation
@@ -96,6 +105,7 @@ npm run cap:open:android  # Android Studio
 |-----|---------|
 | [`CLAUDE.md`](CLAUDE.md) | Architecture & workflow notes for contributors / AI assistants |
 | [`docs/STORE_RELEASE.md`](docs/STORE_RELEASE.md) | App Store & Google Play preparation |
+| [`docs/MOBILE_CI.md`](docs/MOBILE_CI.md) | GitHub Actions: Android AAB / iOS simulator CI & secrets |
 | [`PRIVACY.md`](PRIVACY.md) | English privacy policy (keep aligned with in-app text) |
 
 ---
