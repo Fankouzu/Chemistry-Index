@@ -26,7 +26,8 @@ npm run cap:open:android  # Open Android Studio (requires Android SDK / ANDROID_
 - **App ID**: `com.chemistryindex.app` (see `capacitor.config.ts`).
 - **Workflow**: After UI changes, run `npm run cap:sync`, then build/run from Xcode or Android Studio.
 - **Tooling**: macOS needs **Xcode** (iOS) and **Android Studio** with SDK; **CocoaPods** for iOS (`brew install cocoapods`). Set `ANDROID_HOME` to your SDK path (e.g. `~/Library/Android/sdk`) and add `platform-tools` to `PATH` for `adb`.
-- **iOS release**: In Xcode, set **Signing & Capabilities** → Team, then **Product → Archive** for TestFlight / App Store.
+- **iOS signing (fixes “requires a development team”)**: Open `ios/App/App.xcworkspace` in Xcode (not `.xcodeproj` alone). Select the **App** target → **Signing & Capabilities** → enable **Automatically manage signing** → choose a **Team**. If the menu is empty: **Xcode → Settings (Preferences) → Accounts** → `+` → sign in with your Apple ID; a free account provides **Personal Team** for simulator and limited device testing. If the bundle ID `com.chemistryindex.app` conflicts with another app on your account, change **Bundle Identifier** on the same screen (and align `appId` in `capacitor.config.ts` if you plan to keep using Capacitor sync).
+- **iOS release**: Same **Signing & Capabilities** Team; use a paid **Apple Developer Program** team for TestFlight / App Store, then **Product → Archive**.
 - **Android release**: Copy `android/keystore.properties.example` to `android/keystore.properties`, add `android/release.keystore` (gitignored), then **Build → Generate Signed Bundle** in Android Studio, or `./gradlew bundleRelease` from `android/`.
 - **Git / Vercel**: Branch **`web`** holds the deployable web app; **Vercel production** should track **`web`**. **`main`** carries Capacitor (`ios/`, `android/`) and mobile-related changes. Configure the production branch in the Vercel project (Settings → Git).
 

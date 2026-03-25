@@ -25,41 +25,46 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans text-gray-900 dark:text-gray-100 selection:bg-blue-200 dark:selection:bg-blue-900 transition-colors duration-200">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10 transition-colors duration-200">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 dark:bg-blue-500 rounded-xl flex items-center justify-center shadow-inner shadow-blue-400/20 dark:shadow-blue-600/20">
-              <FlaskConical className="w-6 h-6 text-white" />
+      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white pt-[env(safe-area-inset-top,0px)] transition-colors duration-200 dark:border-gray-800 dark:bg-gray-900">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-2 min-h-14 sm:h-16 sm:py-0">
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+            <div className="shrink-0 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-inner shadow-blue-400/20 dark:bg-blue-500 dark:shadow-blue-600/20">
+              <FlaskConical className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h1 className="truncate text-lg font-bold tracking-tight text-gray-900 dark:text-white sm:text-xl">
               初中化学方程式
             </h1>
           </div>
-          
-          <div className="flex items-center gap-4">
-            <nav className="flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-xl transition-colors duration-200">
+
+          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+            <nav
+              className="flex items-center rounded-xl bg-gray-100 p-1 dark:bg-gray-800"
+              aria-label="模式切换"
+            >
               <button
                 type="button"
                 onClick={() => setActiveTab('learning')}
-                className={`flex items-center justify-center gap-2 min-h-11 min-w-11 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                aria-pressed={activeTab === 'learning'}
+                className={`flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all [touch-action:manipulation] sm:px-4 ${
                   activeTab === 'learning'
-                    ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                    ? 'bg-white text-blue-600 shadow-sm dark:bg-gray-700 dark:text-blue-400'
+                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
               >
-                <BookOpen className="w-4 h-4" />
+                <BookOpen className="h-4 w-4 shrink-0" aria-hidden />
                 <span className="hidden sm:inline">方程式大全</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('practice')}
-                className={`flex items-center justify-center gap-2 min-h-11 min-w-11 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                aria-pressed={activeTab === 'practice'}
+                className={`flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all [touch-action:manipulation] sm:px-4 ${
                   activeTab === 'practice'
-                    ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                    ? 'bg-white text-blue-600 shadow-sm dark:bg-gray-700 dark:text-blue-400'
+                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
               >
-                <Edit3 className="w-4 h-4" />
+                <Edit3 className="h-4 w-4 shrink-0" aria-hidden />
                 <span className="hidden sm:inline">配平练习</span>
               </button>
             </nav>
@@ -67,17 +72,17 @@ function App() {
             <button
               type="button"
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="min-h-11 min-w-11 inline-flex items-center justify-center p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100 text-gray-600 transition-colors [touch-action:manipulation] hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
               aria-label="Toggle dark mode"
             >
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="pb-20">
+      {/* Main Content — z-0 keeps transformed layers below sticky header hit-testing */}
+      <main className="relative z-0 pb-20">
         <motion.div
           key={activeTab}
           className="text-gray-900 dark:text-[rgb(243,244,246)]"

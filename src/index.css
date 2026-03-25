@@ -1,21 +1,54 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Serif+SC:wght@400;700&display=swap');
+/* Bundled fonts — avoids iOS Simulator / WKWebView failing to load fonts.googleapis.com (tofu boxes). */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+@import "@fontsource/inter/900.css";
+@import "@fontsource/noto-serif-sc/chinese-simplified-400.css";
+@import "@fontsource/noto-serif-sc/chinese-simplified-700.css";
 @import "tailwindcss";
 
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Noto Serif SC", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  /* System CJK fallbacks when a weight is missing or for mixed script. */
+  --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Noto Serif SC", "Songti SC", "STSong", ui-serif, Georgia, serif;
+}
+
+/* Match App surfaces (gray-50 / gray-950) so iOS overscroll does not flash white. */
+html {
+  background-color: #f9fafb;
+  color-scheme: light;
+}
+html.dark {
+  background-color: #030712;
+  color-scheme: dark;
 }
 
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Safe areas for notched devices (Capacitor / mobile WebView) */
-  padding-top: env(safe-area-inset-top, 0px);
+  min-height: 100%;
+  min-height: 100dvh;
+  background-color: #f9fafb;
+  /* Side + bottom safe areas; top inset is on sticky header so it does not cover status bar */
   padding-right: env(safe-area-inset-right, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   padding-left: env(safe-area-inset-left, 0px);
+}
+html.dark body {
+  background-color: #030712;
+}
+
+#root {
+  min-height: 100%;
+  min-height: 100dvh;
+  background-color: #f9fafb;
+}
+html.dark #root {
+  background-color: #030712;
 }
 
 /* Hide scrollbar for horizontal scroll areas */

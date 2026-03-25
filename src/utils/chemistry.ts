@@ -44,7 +44,12 @@ export const getArrayGcd = (arr: number[]): number => {
   return arr.reduce((acc, val) => getGcd(acc, val), arr[0]);
 };
 
-/** Pick a single emoji hint from Chinese phenomenon text for UI labels. */
+/**
+ * Pick a single emoji hint from Chinese phenomenon text for UI labels.
+ * Uses older / widely-glyph-coded emoji so iOS Simulator (reduced Apple Color Emoji
+ * coverage) matches real devices; avoid Unicode 12+ large circles (e.g. 🟤🟢) and
+ * Unicode 14+ (e.g. 🫧🫗) which often render as tofu in Simulator.
+ */
 export const getPhenomenonEmoji = (phenomenon: string): string => {
   const t = phenomenon;
   if (/无明显现象/.test(t)) return '🔍';
@@ -54,17 +59,17 @@ export const getPhenomenonEmoji = (phenomenon: string): string => {
   if (/发出白光/.test(t)) return '🔥';
   if (/水雾|水珠/.test(t)) return '💧';
   if (/白烟/.test(t)) return '💨';
-  if (/石灰水变浑浊|变浑浊/.test(t)) return '🌫️';
-  if (/红褐色沉淀/.test(t)) return '🟤';
-  if (/蓝色絮状|蓝色沉淀/.test(t)) return '🔵';
+  if (/石灰水变浑浊|变浑浊/.test(t)) return '🌁';
+  if (/红褐色沉淀/.test(t)) return '⚫';
+  if (/蓝色絮状|蓝色沉淀/.test(t)) return '🔷';
   if (/白色沉淀|不溶于稀硝酸/.test(t)) return '⚪';
   if (/沉淀/.test(t)) return '🧪';
-  if (/气泡/.test(t)) return '🫧';
+  if (/气泡/.test(t)) return '💦';
   if (/石蕊|酚酞|试纸/.test(t)) return '🧪';
-  if (/氯气|黄绿色|浅黄绿色/.test(t)) return '🟢';
+  if (/氯气|黄绿色|浅黄绿色/.test(t)) return '💚';
   if (/刺激性气味/.test(t)) return '👃';
   if (/钠浮|四处游动|嘶嘶/.test(t)) return '💥';
-  if (/溶解/.test(t)) return '🫗';
+  if (/溶解/.test(t)) return '💧';
   if (/覆盖一层|银白色物质/.test(t)) return '✨';
   if (/固体逐渐|粉末逐渐|逐渐减少|逐渐变成|逐渐变少/.test(t)) return '⚗️';
   if (/热量|放热|大量的热|熔化/.test(t)) return '♨️';
@@ -87,7 +92,7 @@ export function getReactionConditionEmojis(segment: string): string {
   if (/点燃/.test(s)) push('🔥');
   if (/催化剂/.test(s)) push('🧪');
   if (/MnO2|二氧化锰/i.test(s)) push('⚗️');
-  if (/高温/.test(s)) push('🌡️');
+  if (/高温/.test(s)) push('🌋');
   if (/加热/.test(s)) push('♨️');
   if (/高压/.test(s)) push('💨');
   if (/光照|紫外线/.test(s)) push('☀️');

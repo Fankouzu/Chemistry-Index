@@ -11,8 +11,11 @@ interface EquationDisplayProps {
   interactive?: boolean;
 }
 
-/** Larger formula line; font family stays on Formula (font-serif) */
+/** Read-only equation line */
 const FORMULA_SIZE = 'text-2xl sm:text-3xl md:text-[2.125rem] leading-tight';
+/** Practice mode: shrink on narrow screens */
+const FORMULA_SIZE_INTERACTIVE =
+  'text-base min-[380px]:text-lg min-[420px]:text-xl sm:text-2xl md:text-3xl md:text-[2.125rem] leading-tight';
 
 export const EquationDisplay: React.FC<EquationDisplayProps> = ({
   equation,
@@ -29,13 +32,15 @@ export const EquationDisplay: React.FC<EquationDisplayProps> = ({
         <div key={key} className="flex items-center">
           <input
             type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             value={userCoefficients[key] || ''}
             onChange={(e) => onCoefficientChange?.(key, e.target.value.replace(/[^0-9]/g, ''))}
-            className="font-serif mx-1 h-12 w-10 rounded-t border-b-2 border-blue-400 bg-blue-50/50 text-center text-xl font-bold text-zinc-900 transition-colors focus:border-blue-600 focus:bg-blue-100 focus:outline-none dark:border-blue-600 dark:bg-blue-900/20 dark:text-zinc-100 dark:focus:border-blue-400 dark:focus:bg-blue-900/40"
+            className="font-serif mx-0.5 h-9 w-8 rounded-t border-b-2 border-blue-400 bg-blue-50/50 text-center text-base font-bold text-zinc-900 transition-colors focus:border-blue-600 focus:bg-blue-100 focus:outline-none min-[380px]:mx-1 min-[380px]:h-11 min-[380px]:w-9 sm:h-12 sm:w-10 sm:text-xl dark:border-blue-600 dark:bg-blue-900/20 dark:text-zinc-100 dark:focus:border-blue-400 dark:focus:bg-blue-900/40"
             placeholder="1"
             maxLength={2}
           />
-          <Formula text={mol.formula} className={FORMULA_SIZE} />
+          <Formula text={mol.formula} className={FORMULA_SIZE_INTERACTIVE} />
         </div>
       );
     }
@@ -58,7 +63,14 @@ export const EquationDisplay: React.FC<EquationDisplayProps> = ({
         {equation.reactants.map((mol, i) => (
           <React.Fragment key={`r-${i}`}>
             {i > 0 && (
-              <span className="mx-2 font-bold text-zinc-900 dark:text-white sm:mx-3 text-2xl sm:text-3xl md:text-[2rem]" aria-hidden>
+              <span
+                className={`mx-1 font-bold text-zinc-900 dark:text-white min-[380px]:mx-2 sm:mx-3 ${
+                  interactive
+                    ? 'text-lg min-[380px]:text-xl sm:text-2xl md:text-3xl md:text-[2rem]'
+                    : 'text-2xl sm:text-3xl md:text-[2rem]'
+                }`}
+                aria-hidden
+              >
                 +
               </span>
             )}
@@ -67,8 +79,8 @@ export const EquationDisplay: React.FC<EquationDisplayProps> = ({
         ))}
       </div>
 
-      <div className="relative mx-3 flex min-w-[4.5rem] flex-col items-center sm:mx-5 sm:min-w-[5.5rem]">
-        <span className="absolute -top-6 max-w-[min(90vw,18rem)] whitespace-normal text-center text-sm font-medium text-zinc-600 dark:text-white sm:-top-5 sm:text-base">
+      <div className="relative mx-2 flex min-w-[3.5rem] flex-col items-center min-[380px]:mx-3 min-[380px]:min-w-[4.5rem] sm:mx-5 sm:min-w-[5.5rem]">
+        <span className="absolute -top-5 max-w-[min(92vw,18rem)] whitespace-normal text-center text-[11px] font-medium text-zinc-600 dark:text-white min-[380px]:-top-6 min-[380px]:text-xs sm:-top-5 sm:text-sm md:text-base">
           {formatEquationConditionsWithEmojis(equation.conditions)}
         </span>
         <div className="flex w-full items-center">
@@ -81,7 +93,14 @@ export const EquationDisplay: React.FC<EquationDisplayProps> = ({
         {equation.products.map((mol, i) => (
           <React.Fragment key={`p-${i}`}>
             {i > 0 && (
-              <span className="mx-2 font-bold text-zinc-900 dark:text-white sm:mx-3 text-2xl sm:text-3xl md:text-[2rem]" aria-hidden>
+              <span
+                className={`mx-1 font-bold text-zinc-900 dark:text-white min-[380px]:mx-2 sm:mx-3 ${
+                  interactive
+                    ? 'text-lg min-[380px]:text-xl sm:text-2xl md:text-3xl md:text-[2rem]'
+                    : 'text-2xl sm:text-3xl md:text-[2rem]'
+                }`}
+                aria-hidden
+              >
                 +
               </span>
             )}

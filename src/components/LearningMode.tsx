@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { equations, ReactionType, Equation } from '../data/equations';
 import { EquationDisplay } from './EquationDisplay';
 import { Search, Filter, Info, Heart, FlaskConical } from 'lucide-react';
@@ -33,11 +33,53 @@ export const LearningMode: React.FC = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  /** Which equation's phenomenon panel is open (click/tap; desktop also supports hover). */
+  const [phenomenonOpenId, setPhenomenonOpenId] = useState<string | null>(null);
+  /** True when primary input is fine pointer + hover (mouse desktop); touch stays false. */
+  const [phenomenonHoverCapable, setPhenomenonHoverCapable] = useState(false);
+  const phenomenonHoverCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 当收藏列表改变时，保存到 localStorage
   useEffect(() => {
     localStorage.setItem('chem_favorites', JSON.stringify(favorites));
   }, [favorites]);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const apply = () => setPhenomenonHoverCapable(mq.matches);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
+
+  useEffect(() => {
+    if (phenomenonOpenId == null) return;
+    const closeIfOutside = (e: MouseEvent | TouchEvent) => {
+      const el = e.target;
+      if (!(el instanceof Element)) return;
+      if (el.closest('[data-phenomenon-popover-root]')) return;
+      setPhenomenonOpenId(null);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPhenomenonOpenId(null);
+    };
+    document.addEventListener('mousedown', closeIfOutside);
+    document.addEventListener('touchstart', closeIfOutside, { passive: true });
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', closeIfOutside);
+      document.removeEventListener('touchstart', closeIfOutside);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [phenomenonOpenId]);
+
+  useEffect(() => {
+    return () => {
+      if (phenomenonHoverCloseTimerRef.current != null) {
+        clearTimeout(phenomenonHoverCloseTimerRef.current);
+      }
+    };
+  }, []);
 
   const toggleFavorite = (id: string) => {
     setFavorites(prev => 
@@ -243,7 +285,7 @@ export const LearningMode: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               key={eq.id}
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-md transition-shadow"
+              className="rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
             >
               <div className="bg-gray-50/80 dark:bg-gray-800/50 px-6 py-3 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
                 <div className="flex items-center gap-3">
@@ -273,23 +315,91 @@ export const LearningMode: React.FC = () => {
                 <EquationDisplay equation={eq} />
                 
                 {eq.phenomenon && (
-                  <div className="mt-6 flex justify-end relative group">
-                    <button
-                      type="button"
-                      aria-label={`实验现象：${eq.phenomenon}`}
-                      title="悬停查看实验现象"
-                      className="inline-flex size-10 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 transition-colors cursor-default text-xl leading-none"
+                  <div className="mt-6 flex w-full justify-end">
+                    <div
+                      className="relative inline-flex flex-col items-end p-3 -m-3 sm:p-4 sm:-m-4"
+                      data-phenomenon-popover-root
+                      onMouseEnter={() => {
+                        if (!phenomenonHoverCapable) return;
+                        // Only cancel delayed close when re-entering popover (e.g. from panel); opening is button-only.
+                        if (phenomenonHoverCloseTimerRef.current != null) {
+                          clearTimeout(phenomenonHoverCloseTimerRef.current);
+                          phenomenonHoverCloseTimerRef.current = null;
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        if (!phenomenonHoverCapable) return;
+                        phenomenonHoverCloseTimerRef.current = setTimeout(() => {
+                          setPhenomenonOpenId((id) => (id === eq.id ? null : id));
+                          phenomenonHoverCloseTimerRef.current = null;
+                        }, 200);
+                      }}
                     >
-                      <span aria-hidden="true">{getPhenomenonEmoji(eq.phenomenon)}</span>
-                    </button>
-                    {/* 悬浮提示框 */}
-                    <div className="absolute bottom-full right-0 mb-2 w-72 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 pointer-events-none">
-                      <h4 className="text-sm font-bold text-amber-900 dark:text-amber-400 mb-2 flex items-center gap-1">
-                        <Info className="w-4 h-4" /> 实验现象
-                      </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
-                        {eq.phenomenon}
-                      </p>
+                      {/* Narrow hit bridge only while open: covers the gap between icon and panel so the panel does not flicker closed on desktop */}
+                      {phenomenonHoverCapable && phenomenonOpenId === eq.id && (
+                        <>
+                          <span
+                            aria-hidden
+                            className="pointer-events-auto absolute top-full right-0 z-[15] mt-0 block h-3 w-[min(18rem,calc(100vw-2rem))] sm:hidden"
+                          />
+                          <span
+                            aria-hidden
+                            className="pointer-events-auto absolute right-0 bottom-full z-[15] mb-0 hidden h-3 w-[min(18rem,calc(100vw-2rem))] translate-y-px sm:block"
+                          />
+                        </>
+                      )}
+                      <button
+                        type="button"
+                        aria-expanded={phenomenonOpenId === eq.id}
+                        aria-controls={`phenomenon-panel-${eq.id}`}
+                        aria-label="查看实验现象"
+                        title={
+                          phenomenonHoverCapable
+                            ? '将鼠标移到图标上即可查看；也可点击切换'
+                            : '点击查看实验现象'
+                        }
+                        onMouseEnter={() => {
+                          if (!phenomenonHoverCapable) return;
+                          if (phenomenonHoverCloseTimerRef.current != null) {
+                            clearTimeout(phenomenonHoverCloseTimerRef.current);
+                            phenomenonHoverCloseTimerRef.current = null;
+                          }
+                          setPhenomenonOpenId(eq.id);
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (phenomenonHoverCloseTimerRef.current != null) {
+                            clearTimeout(phenomenonHoverCloseTimerRef.current);
+                            phenomenonHoverCloseTimerRef.current = null;
+                          }
+                          setPhenomenonOpenId((id) => (id === eq.id ? null : eq.id));
+                        }}
+                        className={`relative z-10 inline-flex size-11 min-h-11 min-w-11 items-center justify-center rounded-lg text-xl leading-none transition-colors [touch-action:manipulation] sm:size-10 ${
+                          phenomenonOpenId === eq.id
+                            ? 'bg-amber-200 text-amber-900 ring-2 ring-amber-400 dark:bg-amber-800/50 dark:text-amber-200 dark:ring-amber-500'
+                            : 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/40'
+                        }`}
+                      >
+                        <span aria-hidden="true">{getPhenomenonEmoji(eq.phenomenon)}</span>
+                      </button>
+                      <div
+                        id={`phenomenon-panel-${eq.id}`}
+                        role="region"
+                        aria-label="实验现象详情"
+                        className={`absolute right-0 z-20 w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-gray-100 bg-white p-4 shadow-xl transition-all dark:border-gray-700 dark:bg-gray-800 max-sm:top-full max-sm:mt-2 sm:bottom-full sm:mb-2 sm:top-auto pointer-events-auto ${
+                          phenomenonOpenId === eq.id
+                            ? 'visible opacity-100'
+                            : 'invisible pointer-events-none opacity-0'
+                        }`}
+                      >
+                        <h4 className="mb-2 flex items-center gap-1 text-sm font-bold text-amber-900 dark:text-amber-400">
+                          <Info className="h-4 w-4 shrink-0" aria-hidden />
+                          实验现象
+                        </h4>
+                        <p className="text-sm leading-relaxed text-gray-600 whitespace-pre-wrap dark:text-gray-300">
+                          {eq.phenomenon}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 )}
