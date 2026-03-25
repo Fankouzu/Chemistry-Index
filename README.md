@@ -2,19 +2,22 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# Chemistry Index
 
-This contains everything you need to run your app locally.
+Junior high chemistry equations — web (Vite + React) and mobile (Capacitor).
 
 View your app in AI Studio: https://ai.studio/apps/658093d4-8a27-4133-a8a9-e9a976eeba42
 
-## Run Locally
+## Run locally
 
-**Prerequisites:**  Node.js
+**Prerequisites:** Node.js
 
+1. Install dependencies: `npm install`
+2. Run the app: `npm run dev`
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Mobile (Capacitor)
+
+- Production web build + sync: `npm run cap:sync`
+- Open native projects: `npm run cap:open:ios` / `npm run cap:open:android`
+
+See [docs/STORE_RELEASE.md](docs/STORE_RELEASE.md) for App Store / Play checklist. Privacy template: [PRIVACY.md](PRIVACY.md) (host publicly before release).

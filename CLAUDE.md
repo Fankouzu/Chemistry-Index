@@ -28,7 +28,9 @@ npm run cap:open:android  # Open Android Studio (requires Android SDK / ANDROID_
 - **Tooling**: macOS needs **Xcode** (iOS) and **Android Studio** with SDK; **CocoaPods** for iOS (`brew install cocoapods`). Set `ANDROID_HOME` to your SDK path (e.g. `~/Library/Android/sdk`) and add `platform-tools` to `PATH` for `adb`.
 - **iOS signing (fixes “requires a development team”)**: Open `ios/App/App.xcworkspace` in Xcode (not `.xcodeproj` alone). Select the **App** target → **Signing & Capabilities** → enable **Automatically manage signing** → choose a **Team**. If the menu is empty: **Xcode → Settings (Preferences) → Accounts** → `+` → sign in with your Apple ID; a free account provides **Personal Team** for simulator and limited device testing. If the bundle ID `com.chemistryindex.app` conflicts with another app on your account, change **Bundle Identifier** on the same screen (and align `appId` in `capacitor.config.ts` if you plan to keep using Capacitor sync).
 - **iOS release**: Same **Signing & Capabilities** Team; use a paid **Apple Developer Program** team for TestFlight / App Store, then **Product → Archive**.
-- **Android release**: Copy `android/keystore.properties.example` to `android/keystore.properties`, add `android/release.keystore` (gitignored), then **Build → Generate Signed Bundle** in Android Studio, or `./gradlew bundleRelease` from `android/`.
+- **Android release**: Copy `android/keystore.properties.example` to `android/keystore.properties` (gitignored), point `storeFile` at your `.jks`, then **Build → Generate Signed Bundle** in Android Studio, or `./gradlew bundleRelease` from `android/`.
+- **Store checklist / privacy template**: `docs/STORE_RELEASE.md`, `PRIVACY.md` (host publicly before release).
+- **iOS lifecycle**: The app uses **UIScene** (`SceneDelegate.swift`) + `UIApplicationSceneManifest` in `Info.plist`.
 - **Git / Vercel**: Branch **`web`** holds the deployable web app; **Vercel production** should track **`web`**. **`main`** carries Capacitor (`ios/`, `android/`) and mobile-related changes. Configure the production branch in the Vercel project (Settings → Git).
 
 ## Architecture
@@ -38,6 +40,7 @@ npm run cap:open:android  # Open Android Studio (requires Android SDK / ANDROID_
 - `src/App.tsx` - Main container with tab navigation and dark mode toggle
 
 ### Core Components
+- `PrivacyPolicyPanel` - Offline in-app privacy policy (no network); keep in sync with `PRIVACY.md`
 - `LearningMode` - Equation browser with search, type/element filters, favorites
 - `PracticeMode` - Balancing quiz with scoring and streak tracking
 - `EquationDisplay` - Renders chemical equations with reactants/products and reaction arrow

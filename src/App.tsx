@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { LearningMode } from './components/LearningMode';
 import { PracticeMode } from './components/PracticeMode';
-import { BookOpen, Edit3, FlaskConical, Sun, Moon } from 'lucide-react';
+import { BookOpen, Edit3, FlaskConical, Sun, Moon, Shield } from 'lucide-react';
 import { motion } from 'motion/react';
+import { PrivacyPolicyPanel } from './components/PrivacyPolicyPanel';
 
 function App() {
   const [activeTab, setActiveTab] = useState<'learning' | 'practice'>('learning');
+  const [privacyOpen, setPrivacyOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('chem_theme');
     if (saved) return saved === 'dark';
@@ -81,8 +83,7 @@ function App() {
         </div>
       </header>
 
-      {/* Main Content — z-0 keeps transformed layers below sticky header hit-testing */}
-      <main className="relative z-0 pb-20">
+      <main className="relative z-0">
         <motion.div
           key={activeTab}
           className="text-gray-900 dark:text-[rgb(243,244,246)]"
@@ -92,7 +93,30 @@ function App() {
         >
           {activeTab === 'learning' ? <LearningMode /> : <PracticeMode />}
         </motion.div>
+
+        {/* End of scroll — not fixed; flows after tab content */}
+        <footer
+          className="mt-12 border-t border-gray-200 bg-gray-50/80 dark:border-gray-800 dark:bg-gray-950/80"
+          style={{
+            paddingBottom: 'max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1rem))',
+            paddingTop: '1.25rem',
+          }}
+        >
+          <div className="mx-auto flex max-w-5xl justify-center px-4">
+            <button
+              type="button"
+              onClick={() => setPrivacyOpen(true)}
+              className="flex min-h-11 w-full max-w-md items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-colors [touch-action:manipulation] hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800 sm:w-auto"
+              aria-label="查看隐私政策（离线可阅）"
+            >
+              <Shield className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" aria-hidden />
+              隐私政策
+            </button>
+          </div>
+        </footer>
       </main>
+
+      <PrivacyPolicyPanel open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
     </div>
   );
 }

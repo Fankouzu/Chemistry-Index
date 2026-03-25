@@ -7,3 +7,12 @@ coverage/
 .env*
 !.env.example
 .sisyphus
+
+# Android release signing (never commit real secrets)
+android/keystore.properties
+*.jks
+*.keystore
+
+# Xcode / iOS local artifacts
+*.xcuserstate
+xcuserdata/
