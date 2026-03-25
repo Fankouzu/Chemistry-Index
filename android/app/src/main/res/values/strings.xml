@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Chemistry Index</string>
+    <string name="title_activity_main">Chemistry Index</string>
+    <string name="package_name">com.chemistryindex.app</string>
+    <string name="custom_url_scheme">com.chemistryindex.app</string>
+</resources>

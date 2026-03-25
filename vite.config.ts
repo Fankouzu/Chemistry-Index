@@ -6,8 +6,11 @@ import {defineConfig, loadEnv} from 'vite';
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
+    // Relative asset paths for Capacitor (file/capacitor scheme)
+    base: './',
     plugins: [react(), tailwindcss()],
     define: {
+      // Bundled into the client — do not ship production secrets; prefer a backend proxy for mobile.
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
     resolve: {

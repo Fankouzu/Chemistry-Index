@@ -39,8 +39,9 @@ function App() {
           <div className="flex items-center gap-4">
             <nav className="flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-xl transition-colors duration-200">
               <button
+                type="button"
                 onClick={() => setActiveTab('learning')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center justify-center gap-2 min-h-11 min-w-11 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeTab === 'learning'
                     ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
@@ -50,8 +51,9 @@ function App() {
                 <span className="hidden sm:inline">方程式大全</span>
               </button>
               <button
+                type="button"
                 onClick={() => setActiveTab('practice')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center justify-center gap-2 min-h-11 min-w-11 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeTab === 'practice'
                     ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
@@ -63,8 +65,9 @@ function App() {
             </nav>
 
             <button
+              type="button"
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+              className="min-h-11 min-w-11 inline-flex items-center justify-center p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
               aria-label="Toggle dark mode"
             >
               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
