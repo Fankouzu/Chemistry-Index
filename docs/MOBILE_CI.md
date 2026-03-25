@@ -28,6 +28,8 @@ base64 -w0 release.keystore           # Linux
 
 The workflow writes `android/release.keystore` and `android/keystore.properties` (not committed).
 
+**Note:** Step `if:` conditions cannot reference the `secrets` context on GitHub Actions. The workflow sets `env.HAS_ANDROID_KEYSTORE` at the job level from `secrets.ANDROID_KEYSTORE_BASE64 != ''`, then steps use `env.HAS_ANDROID_KEYSTORE == 'true'`.
+
 If these secrets are **missing**, CI still runs **`assembleDebug`** and uploads a **debug APK** so you can verify the pipeline without sharing signing keys.
 
 ## iOS — what CI produces today
