@@ -8,6 +8,9 @@ coverage/
 !.env.example
 .sisyphus
 
+# Gradle: IDE-generated daemon JVM pin (JetBrains JBR) breaks Linux CI toolchain download
+android/gradle/gradle-daemon-jvm.properties
+
 # Android release signing (never commit real secrets)
 android/keystore.properties
 *.jks
