@@ -7,6 +7,13 @@ Workflow: [`.github/workflows/mobile-release.yml`](../.github/workflows/mobile-r
 - **Manual:** Actions → *Mobile release* → *Run workflow*
 - **Tags:** Push a tag matching `v*` (e.g. `v1.0.0`)
 
+## Artifacts vs GitHub Releases
+
+Every successful run uploads **workflow artifacts** (Actions → open the run → **Artifacts** at the bottom). Those are **not** the same as the **Releases** tab.
+
+- **Tag push (`v*`):** After Android and iOS jobs finish, a **Publish GitHub Release** job creates a [GitHub Release](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases) for that tag and attaches the same files (AAB or debug APK + iOS simulator zip).
+- **Manual run:** Only artifacts are produced; no Release is created (the run is not tied to a version tag).
+
 ## Android — Play-ready AAB
 
 To produce a **signed** `.aab` for Google Play (or other stores accepting AAB):

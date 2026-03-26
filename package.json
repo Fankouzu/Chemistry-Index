@@ -1,7 +1,7 @@
 {
   "name": "chemistry-index",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
@@ -11,7 +11,8 @@
     "lint": "tsc --noEmit",
     "cap:sync": "npm run build && npx cap sync",
     "cap:open:ios": "npx cap open ios",
-    "cap:open:android": "npx cap open android"
+    "cap:open:android": "npx cap open android",
+    "assets:generate": "npx @capacitor/assets generate --ios --android --iconBackgroundColor '#FFFFFF' --iconBackgroundColorDark '#111111' --splashBackgroundColor '#FFFFFF' --splashBackgroundColorDark '#111111'"
   },
   "dependencies": {
     "@capacitor/android": "7.6.0",
@@ -28,6 +29,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@types/node": "^22.14.0",
     "autoprefixer": "^10.4.21",
     "tailwindcss": "^4.1.14",

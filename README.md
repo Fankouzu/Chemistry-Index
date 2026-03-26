@@ -84,6 +84,7 @@ npm run cap:open:android  # Android Studio
 ```
 
 - **Bundle ID:** `com.chemistryindex.app` — see `capacitor.config.ts`  
+- **App icon & splash:** Put `assets/logo.png` (1024×1024+), then `npm run assets:generate` and `npx cap sync` — see [`assets/README.md`](assets/README.md)  
 - **Release signing:** Android `android/keystore.properties.example` → `keystore.properties` (gitignored)  
 - **Store checklist:** [`docs/STORE_RELEASE.md`](docs/STORE_RELEASE.md)  
 - **Privacy template (English):** [`PRIVACY.md`](PRIVACY.md) — host a public URL for store consoles; in-app copy stays in sync via `PrivacyPolicyPanel`
@@ -119,6 +120,7 @@ Chemistry-Index/
 │   ├── components/             # LearningMode, PracticeMode, EquationDisplay, …
 │   ├── data/                   # equations.ts, elements metadata
 │   └── utils/                  # chemistry parsing, phenomenon emoji helpers
+├── assets/                     # Source logo/splash for @capacitor/assets (see assets/README.md)
 ├── android/                    # Capacitor Android project
 ├── ios/App/                    # Capacitor iOS workspace (Pods)
 ├── docs/

@@ -150,3 +150,29 @@ jobs:
           name: ios-simulator-release-app
           path: ios/App/App-Simulator-Release.zip
           if-no-files-found: error
+
+  # GitHub "Releases" page (not the same as workflow Artifacts — see docs/MOBILE_CI.md).
+  release:
+    name: Publish GitHub Release
+    needs: [android, ios]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download workflow artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          pattern: '*'
+          merge-multiple: true
+
+      - name: Create release and attach builds
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -16,6 +16,12 @@ android/keystore.properties
 *.jks
 *.keystore
 
+# Huawei AppGallery PEPK output (encrypted signing key — never commit)
+sign.zip
+
+# PEPK tool — download when needed; do not vendor in repo
+pepk.jar
+
 # Xcode / iOS local artifacts
 *.xcuserstate
 xcuserdata/
