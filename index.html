@@ -1,14 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hans">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0"
-    />
-    <!-- Hint status bar / browser chrome tint (system light/dark); in-app theme toggle uses header safe-area padding -->
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#030712" media="(prefers-color-scheme: dark)" />
+    <!-- No maximum-scale lock: HIG / accessibility allows dynamic type and zoom when needed -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Updated at runtime in App to match in-app theme (not only system appearance) -->
+    <meta name="theme-color" id="app-theme-color" content="#ffffff" />
     <title>Chemistry Index</title>
   </head>
   <body>

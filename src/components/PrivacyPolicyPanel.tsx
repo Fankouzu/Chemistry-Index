@@ -53,7 +53,7 @@ export const PrivacyPolicyPanel: React.FC<Props> = ({ open, onClose }) => {
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+            className="inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-xl bg-gray-100 text-gray-600 transition-colors [touch-action:manipulation] hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             aria-label="关闭"
           >
             <X className="h-5 w-5" aria-hidden />

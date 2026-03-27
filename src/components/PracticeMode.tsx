@@ -3,6 +3,7 @@ import { equations, Equation, Difficulty } from '../data/equations';
 import { EquationDisplay } from './EquationDisplay';
 import { BalancingDemo } from './BalancingDemo';
 import { motion, AnimatePresence } from 'motion/react';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { CheckCircle2, XCircle, RefreshCw, Lightbulb, Trophy, PlayCircle } from 'lucide-react';
 import { countTotalAtoms, getArrayGcd } from '../utils/chemistry';
 
@@ -16,6 +17,7 @@ export const PracticeMode: React.FC = () => {
   const [showHint, setShowHint] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty | '全部'>('全部');
+  const reducedMotion = usePrefersReducedMotion();
 
   const pickRandomEquation = useCallback((diff: Difficulty | '全部' = difficulty) => {
     // Filter out equations that don't need balancing (all coefficients are 1)
@@ -124,19 +126,21 @@ export const PracticeMode: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">配平练习</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-3">在方框中填入正确的化学计量数（系数为1时可留空）</p>
-          <div className="bg-gray-200/50 dark:bg-gray-800/50 p-1 rounded-xl inline-flex">
+          <div className="inline-flex rounded-xl bg-gray-200/50 p-1 dark:bg-gray-800/50">
             {['全部', '初级', '中级', '高级'].map(d => (
               <button
                 key={d}
+                type="button"
                 onClick={() => {
                   setDifficulty(d as any);
                   pickRandomEquation(d as any);
                   setStreak(0); // Reset streak on difficulty change
                 }}
-                className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
+                aria-pressed={difficulty === d}
+                className={`min-h-11 rounded-lg px-4 text-sm font-bold transition-colors [touch-action:manipulation] ${
                   difficulty === d
-                    ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                    ? 'bg-white text-blue-600 shadow-sm dark:bg-gray-700 dark:text-blue-400'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
               >
                 {d}
@@ -191,9 +195,14 @@ export const PracticeMode: React.FC = () => {
             <AnimatePresence mode="wait">
               {status === 'correct' && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                  initial={
+                    reducedMotion
+                      ? { opacity: 1, y: 0, scale: 1 }
+                      : { opacity: 0, y: 10, scale: 0.9 }
+                  }
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
+                  exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9 }}
+                  transition={reducedMotion ? { duration: 0 } : { duration: 0.2 }}
                   className="flex items-center gap-2 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-6 py-3 rounded-full font-bold"
                 >
                   <CheckCircle2 className="w-6 h-6" />
@@ -202,9 +211,14 @@ export const PracticeMode: React.FC = () => {
               )}
               {status === 'incorrect' && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                  initial={
+                    reducedMotion
+                      ? { opacity: 1, y: 0, scale: 1 }
+                      : { opacity: 0, y: 10, scale: 0.9 }
+                  }
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
+                  exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9 }}
+                  transition={reducedMotion ? { duration: 0 } : { duration: 0.2 }}
                   className="flex flex-col items-center gap-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 px-6 py-3 rounded-2xl font-bold text-center"
                 >
                   <div className="flex items-center gap-2">
@@ -220,36 +234,43 @@ export const PracticeMode: React.FC = () => {
 
             <div className="flex flex-wrap justify-center gap-3 w-full max-w-2xl">
               <button
+                type="button"
                 onClick={checkAnswer}
                 disabled={status === 'correct'}
-                className="flex-[2] min-w-[150px] bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-600/20 dark:shadow-blue-900/40"
+                className="flex-[2] min-h-11 min-w-[150px] rounded-2xl bg-blue-600 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-blue-600/20 transition-colors [touch-action:manipulation] hover:bg-blue-700 motion-safe:active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:shadow-blue-900/40"
               >
                 检查答案
               </button>
               
               <button
+                type="button"
                 onClick={() => setShowDemo(true)}
-                className="flex-1 min-w-[120px] px-4 py-4 rounded-2xl font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all active:scale-95 flex items-center justify-center gap-2"
+                className="flex min-h-11 min-w-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-indigo-50 px-4 py-4 font-bold text-indigo-600 transition-colors [touch-action:manipulation] hover:bg-indigo-100 motion-safe:active:scale-95 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 sm:min-w-[120px]"
                 title="查看配平演示"
+                aria-label="查看配平演示"
               >
                 <PlayCircle className="w-5 h-5" />
                 <span className="hidden sm:inline">动画演示</span>
               </button>
 
               <button
+                type="button"
                 onClick={fillHint}
                 disabled={status === 'correct' || showHint}
-                className="flex-1 min-w-[100px] px-4 py-4 rounded-2xl font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex min-h-11 min-w-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-amber-50 px-4 py-4 font-bold text-amber-600 transition-colors [touch-action:manipulation] hover:bg-amber-100 motion-safe:active:scale-95 disabled:opacity-50 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/50 sm:min-w-[100px]"
                 title="显示答案"
+                aria-label="显示答案提示"
               >
                 <Lightbulb className="w-5 h-5" />
                 <span className="hidden sm:inline">答案</span>
               </button>
 
               <button
+                type="button"
                 onClick={pickRandomEquation}
-                className="flex-1 min-w-[100px] px-4 py-4 rounded-2xl font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+                className="flex min-h-11 min-w-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-gray-100 px-4 py-4 font-bold text-gray-600 transition-colors [touch-action:manipulation] hover:bg-gray-200 motion-safe:active:scale-95 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 sm:min-w-[100px]"
                 title="跳过此题"
+                aria-label="跳过此题"
               >
                 <RefreshCw className="w-5 h-5" />
                 <span className="hidden sm:inline">跳过</span>

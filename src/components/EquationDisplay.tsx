@@ -36,7 +36,8 @@ export const EquationDisplay: React.FC<EquationDisplayProps> = ({
             pattern="[0-9]*"
             value={userCoefficients[key] || ''}
             onChange={(e) => onCoefficientChange?.(key, e.target.value.replace(/[^0-9]/g, ''))}
-            className="font-serif mx-0.5 h-9 w-8 rounded-t border-b-2 border-blue-400 bg-blue-50/50 text-center text-base font-bold text-zinc-900 transition-colors focus:border-blue-600 focus:bg-blue-100 focus:outline-none min-[380px]:mx-1 min-[380px]:h-11 min-[380px]:w-9 sm:h-12 sm:w-10 sm:text-xl dark:border-blue-600 dark:bg-blue-900/20 dark:text-zinc-100 dark:focus:border-blue-400 dark:focus:bg-blue-900/40"
+            className="font-serif mx-0.5 h-11 min-h-11 w-9 min-w-9 rounded-t border-b-2 border-blue-400 bg-blue-50/50 text-center text-base font-bold text-zinc-900 transition-colors focus:border-blue-600 focus:bg-blue-100 focus:outline-none min-[380px]:mx-1 sm:h-12 sm:w-10 sm:text-xl dark:border-blue-600 dark:bg-blue-900/20 dark:text-zinc-100 dark:focus:border-blue-400 dark:focus:bg-blue-900/40"
+            aria-label={`${type === 'reactant' ? '反应物' : '生成物'} ${mol.formula} 的化学计量数`}
             placeholder="1"
             maxLength={2}
           />

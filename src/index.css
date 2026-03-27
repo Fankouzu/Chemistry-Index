@@ -11,6 +11,9 @@
 
 @variant dark (&:where(.dark, .dark *));
 
+/* HIG: honor "Reduce Motion"; pair with motion-safe:* utilities for optional effects */
+@custom-variant motion-safe (@media (prefers-reduced-motion: no-preference));
+
 @theme {
   /* System CJK fallbacks when a weight is missing or for mixed script. */
   --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", ui-sans-serif, system-ui, sans-serif;

@@ -3,6 +3,7 @@ import { equations, ReactionType, Equation } from '../data/equations';
 import { EquationDisplay } from './EquationDisplay';
 import { Search, Filter, Info, Heart, FlaskConical } from 'lucide-react';
 import { motion } from 'motion/react';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { getPhenomenonEmoji, parseFormula } from '../utils/chemistry';
 import { CATEGORY_STYLES, ELEMENT_INFO, PERIODIC_TABLE_POSITIONS } from '../data/elements';
 
@@ -38,6 +39,7 @@ export const LearningMode: React.FC = () => {
   /** True when primary input is fine pointer + hover (mouse desktop); touch stays false. */
   const [phenomenonHoverCapable, setPhenomenonHoverCapable] = useState(false);
   const phenomenonHoverCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reducedMotion = usePrefersReducedMotion();
 
   // 当收藏列表改变时，保存到 localStorage
   useEffect(() => {
@@ -128,16 +130,19 @@ export const LearningMode: React.FC = () => {
                 placeholder="搜索物质、化学式 (如: h2o, co2) 支持空格多词搜索..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+                className="min-h-11 w-full rounded-xl border border-gray-300 bg-white py-2 pl-10 pr-4 text-base text-gray-900 outline-none transition-shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               />
             </div>
             <button
+              type="button"
               onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors whitespace-nowrap ${
+              className={`flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border px-4 text-sm font-medium transition-colors [touch-action:manipulation] ${
                 showFavoritesOnly
-                  ? 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800'
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  ? 'border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-900/30 dark:text-red-400'
+                  : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
               }`}
+              aria-pressed={showFavoritesOnly}
+              aria-label={showFavoritesOnly ? '显示全部方程式' : '仅显示收藏的方程式'}
             >
               <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
               <span className="hidden sm:inline">我的收藏</span>
@@ -148,11 +153,13 @@ export const LearningMode: React.FC = () => {
             {['全部', ...REACTION_TYPES].map((type) => (
               <button
                 key={type}
+                type="button"
                 onClick={() => setSelectedType(type as any)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                aria-pressed={selectedType === type}
+                className={`min-h-11 shrink-0 rounded-full px-4 text-sm font-medium whitespace-nowrap transition-colors [touch-action:manipulation] ${
                   selectedType === type
                     ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
                 {type}
@@ -170,8 +177,9 @@ export const LearningMode: React.FC = () => {
             </span>
             {selectedElement && (
               <button
+                type="button"
                 onClick={() => setSelectedElement(null)}
-                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-md"
+                className="min-h-11 rounded-lg bg-blue-50 px-3 text-sm font-medium text-blue-600 transition-colors [touch-action:manipulation] hover:text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 清除筛选
               </button>
@@ -281,9 +289,13 @@ export const LearningMode: React.FC = () => {
         ) : (
           filteredEquations.map((eq, index) => (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
+              transition={
+                reducedMotion
+                  ? { duration: 0 }
+                  : { delay: index * 0.05, duration: 0.35 }
+              }
               key={eq.id}
               className="rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
             >
@@ -292,10 +304,12 @@ export const LearningMode: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => toggleFavorite(eq.id)}
-                  className="shrink-0 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors focus:outline-none"
-                  title={favorites.includes(eq.id) ? "取消收藏" : "加入收藏"}
+                  className="-m-2 inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl text-gray-400 transition-colors [touch-action:manipulation] hover:text-red-500 focus:outline-none dark:text-gray-500 dark:hover:text-red-400"
+                  title={favorites.includes(eq.id) ? '取消收藏' : '加入收藏'}
+                  aria-label={favorites.includes(eq.id) ? '取消收藏' : '加入收藏'}
+                  aria-pressed={favorites.includes(eq.id)}
                 >
-                  <Heart className={`w-5 h-5 ${favorites.includes(eq.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                  <Heart className={`h-5 w-5 ${favorites.includes(eq.id) ? 'fill-red-500 text-red-500' : ''}`} aria-hidden />
                 </button>
               </div>
               <div className="p-6">
@@ -377,7 +391,7 @@ export const LearningMode: React.FC = () => {
                           }
                           setPhenomenonOpenId((id) => (id === eq.id ? null : eq.id));
                         }}
-                        className={`relative z-10 inline-flex size-11 min-h-11 min-w-11 items-center justify-center rounded-lg text-xl leading-none transition-colors [touch-action:manipulation] sm:size-10 ${
+                        className={`relative z-10 inline-flex size-11 min-h-11 min-w-11 items-center justify-center rounded-lg text-xl leading-none transition-colors [touch-action:manipulation] ${
                           phenomenonOpenId === eq.id
                             ? 'bg-amber-200 text-amber-900 ring-2 ring-amber-400 dark:bg-amber-800/50 dark:text-amber-200 dark:ring-amber-500'
                             : 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/40'

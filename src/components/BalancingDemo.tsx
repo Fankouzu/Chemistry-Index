@@ -4,6 +4,7 @@ import { Equation } from '../data/equations';
 import { EquationDisplay } from './EquationDisplay';
 import { Play, Pause, ChevronLeft, ChevronRight, X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { parseFormula, countTotalAtoms } from '../utils/chemistry';
 
 interface BalancingDemoProps {
@@ -14,6 +15,7 @@ interface BalancingDemoProps {
 export const BalancingDemo: React.FC<BalancingDemoProps> = ({ equation, onClose }) => {
   const [stepIndex, setStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const reducedMotion = usePrefersReducedMotion();
 
   // 获取所有涉及的元素
   const allElements = useMemo(() => {
@@ -105,9 +107,14 @@ export const BalancingDemo: React.FC<BalancingDemoProps> = ({ equation, onClose 
       role="presentation"
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={
+          reducedMotion
+            ? { opacity: 1, scale: 1, y: 0 }
+            : { opacity: 0, scale: 0.95, y: 20 }
+        }
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 20 }}
+        transition={reducedMotion ? { duration: 0 } : { duration: 0.25 }}
         className="flex max-h-[min(90vh,calc(100dvh-env(safe-area-inset-top,0px)-2rem))] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900"
         onClick={(e) => e.stopPropagation()}
       >
@@ -117,9 +124,10 @@ export const BalancingDemo: React.FC<BalancingDemoProps> = ({ equation, onClose 
           <button
             type="button"
             onClick={onClose}
-            className="relative z-10 p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-200 rounded-full"
+            className="relative z-10 inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-full text-gray-400 transition-colors [touch-action:manipulation] hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+            aria-label="关闭演示"
           >
-            <X className="h-6 w-6" />
+            <X className="h-6 w-6" aria-hidden />
           </button>
         </div>
 
@@ -171,11 +179,16 @@ export const BalancingDemo: React.FC<BalancingDemoProps> = ({ equation, onClose 
                       <AnimatePresence>
                         {isBalanced && (
                           <motion.div
-                            initial={{ scale: 0, opacity: 0 }}
+                            initial={
+                              reducedMotion
+                                ? { scale: 1, opacity: 1 }
+                                : { scale: 0, opacity: 0 }
+                            }
                             animate={{ scale: 1, opacity: 1 }}
-                            className="bg-green-100 text-green-600 rounded-full p-0.5"
+                            transition={reducedMotion ? { duration: 0 } : { duration: 0.2 }}
+                            className="rounded-full bg-green-100 p-0.5 text-green-600"
                           >
-                            <Check className="w-4 h-4" />
+                            <Check className="h-4 w-4" aria-hidden />
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -190,16 +203,20 @@ export const BalancingDemo: React.FC<BalancingDemoProps> = ({ equation, onClose 
         {/* Controls */}
         <div className="relative z-10 flex shrink-0 items-center justify-between border-t border-gray-100 bg-gray-50 px-6 py-4 dark:border-gray-800 dark:bg-gray-800/50">
           <button
+            type="button"
             onClick={() => setStepIndex(s => Math.max(0, s - 1))}
             disabled={stepIndex === 0}
-            className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-xl text-gray-600 transition-colors [touch-action:manipulation] hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-30 dark:text-gray-400 dark:hover:bg-gray-700"
+            aria-label="上一步"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="h-6 w-6" aria-hidden />
           </button>
 
           <button
+            type="button"
             onClick={() => setIsPlaying(!isPlaying)}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors shadow-md shadow-blue-600/20 dark:shadow-blue-900/40"
+            className="flex min-h-11 items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-bold text-white shadow-md shadow-blue-600/20 transition-colors [touch-action:manipulation] hover:bg-blue-700 dark:shadow-blue-900/40"
+            aria-label={isPlaying ? '暂停自动播放' : stepIndex >= steps.length - 1 ? '重新播放' : '自动播放'}
           >
             {isPlaying ? (
               <>
@@ -213,11 +230,13 @@ export const BalancingDemo: React.FC<BalancingDemoProps> = ({ equation, onClose 
           </button>
 
           <button
+            type="button"
             onClick={() => setStepIndex(s => Math.min(steps.length - 1, s + 1))}
             disabled={stepIndex === steps.length - 1}
-            className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-xl text-gray-600 transition-colors [touch-action:manipulation] hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-30 dark:text-gray-400 dark:hover:bg-gray-700"
+            aria-label="下一步"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="h-6 w-6" aria-hidden />
           </button>
         </div>
       </motion.div>
