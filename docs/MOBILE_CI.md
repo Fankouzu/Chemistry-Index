@@ -11,8 +11,16 @@ Workflow: [`.github/workflows/mobile-release.yml`](../.github/workflows/mobile-r
 
 Every successful run uploads **workflow artifacts** (Actions → open the run → **Artifacts** at the bottom). Those are **not** the same as the **Releases** tab.
 
-- **Tag push (`v*`):** After Android and iOS jobs finish, a **Publish GitHub Release** job creates a [GitHub Release](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases) for that tag and attaches the same files (AAB or debug APK + iOS simulator zip).
+- **Tag push (`v*`):** After Android and iOS jobs finish, a **Publish GitHub Release** job creates a [GitHub Release](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases) for that tag and attaches the same files (AAB or debug APK + iOS simulator zip). The workflow creates a **draft** release first, uploads assets, then marks it **published** so uploads are never blocked by GitHub’s “immutable published release” rule.
 - **Manual run:** Only artifacts are produced; no Release is created (the run is not tied to a version tag).
+
+### Do not pre-publish the same tag
+
+GitHub **does not allow adding release assets after a release is published**. If you run `gh release create v1.x.x --title … --notes …` (or create a published release in the UI) **before** the *Mobile release* workflow finishes, the final step will fail with *Cannot upload asset … to an immutable release*.
+
+**Recommended:** Push only the tag (`git push origin v1.x.x`) and let CI create the release and files. If you already published an empty release, **delete that release** (keep the tag), then **Re-run all jobs** on the workflow run, or push a new tag.
+
+**Recovery for `v1.1.0` (example):** Releases → open `v1.1.0` → Delete release (tag stays). Actions → failed *Mobile release* run → *Re-run all jobs*.
 
 ## Android — Play-ready AAB
 

@@ -167,12 +167,21 @@ jobs:
           pattern: '*'
           merge-multiple: true
 
-      - name: Create release and attach builds
+      # GitHub forbids attaching assets after a release is published ("immutable").
+      # Create a draft first, upload AAB/APK + iOS zip, then publish — avoids races with
+      # a manually published empty release or slow builds finishing after "Publish".
+      - name: Create draft release and attach builds
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
+          draft: true
           generate_release_notes: true
           files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish release
+        run: gh release edit "${{ github.ref_name }}" --draft=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
